@@ -99,7 +99,8 @@
 
 html, body {
   height: 100%;
-  background-color: #0b0f19; /* Surrounding desktop canvas background */
+  width: 100%;
+  background-color: var(--bg-base);
   color: var(--text-main);
   font-family: var(--font-family);
   -webkit-font-smoothing: antialiased;
@@ -108,17 +109,18 @@ html, body {
   touch-action: manipulation;
 }
 
-/* App Viewport Container (Mobile Default: centered column) */
+/* App Viewport Container */
 .app-viewport {
-  max-width: 480px;
-  margin: 0 auto;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
   min-height: 100vh;
   min-height: 100dvh;
   background-color: var(--bg-base);
   display: flex;
   flex-direction: column;
   position: relative;
-  box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+  box-shadow: none;
   transition: background-color 0.25s ease, color 0.25s ease;
 }
 
@@ -128,10 +130,10 @@ html, body {
 .top-app-bar {
   position: fixed;
   top: 0;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
   width: 100%;
-  max-width: 480px;
+  max-width: 100%;
+  transform: none;
   height: calc(var(--header-height) + var(--safe-top));
   padding-top: var(--safe-top);
   background-color: var(--bg-card);
@@ -228,10 +230,10 @@ html, body {
 .bottom-nav {
   position: fixed;
   bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
+  transform: none;
   width: 100%;
-  max-width: 480px;
+  max-width: 100%;
   height: calc(var(--nav-height) + var(--safe-bottom));
   padding-bottom: var(--safe-bottom);
   background-color: var(--bg-card);
@@ -1462,19 +1464,19 @@ html, body {
 }
 
 /* ==========================================================================
-   TABLET & DESKTOP MEDIA QUERIES (>= 768px and >= 1024px)
-   Transforms the app into a full-featured Desktop Application
+   TABLET & DESKTOP MEDIA QUERIES (>= 768px)
+   Transforms the app into a true Full-Width Desktop Application
    ========================================================================== */
 @media (min-width: 768px) {
-  /* Expand Viewport Shell */
+  /* Expand Viewport Shell to 100% full monitor width */
   .app-viewport {
-    max-width: 1360px;
-    width: 100%;
-    margin: 0 auto;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
     display: flex;
     flex-direction: row;
     min-height: 100vh;
-    box-shadow: 0 0 60px rgba(0, 0, 0, 0.45);
+    box-shadow: none;
   }
 
   /* Hide Mobile Top Bar */
@@ -1482,24 +1484,26 @@ html, body {
     display: none !important;
   }
 
-  /* Transform Bottom Navigation Bar into Desktop Left Sidebar */
+  /* Transform Bottom Navigation Bar into Desktop Left Sidebar docked to screen edge */
   .bottom-nav {
     position: sticky;
     top: 0;
     left: 0;
     transform: none;
-    width: 250px;
-    min-width: 250px;
+    width: 260px;
+    min-width: 260px;
+    max-width: 260px;
     height: 100vh;
     flex-direction: column;
     justify-content: flex-start;
     align-items: stretch;
-    padding: 24px 16px;
+    padding: 24px 18px;
     border-top: none;
     border-right: 1px solid var(--border-color);
     box-shadow: none;
     z-index: 40;
     background-color: var(--bg-card);
+    flex-shrink: 0;
   }
 
   /* Desktop Sidebar Brand Header */
@@ -1575,13 +1579,15 @@ html, body {
     margin-top: auto;
   }
 
-  /* Desktop Main Scroll Area */
+  /* Desktop Main Scroll Area - fills 100% of remaining screen width */
   .main-content {
-    flex: 1;
+    flex: 1 1 0%;
+    min-width: 0;
+    width: calc(100% - 260px);
+    max-width: none;
     margin-top: 0;
     margin-bottom: 0;
     padding: 32px 40px;
-    max-width: calc(100% - 250px);
     height: 100vh;
     overflow-y: auto;
   }
@@ -1610,16 +1616,16 @@ html, body {
   /* Dashboard: 4-Column Stats Grid */
   .stats-grid {
     grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
+    gap: 18px;
     margin-bottom: 24px;
   }
 
   .mini-stat-card {
-    padding: 16px 18px;
+    padding: 18px 20px;
   }
 
   .mini-stat-value {
-    font-size: 1.45rem;
+    font-size: 1.5rem;
   }
 
   /* Dashboard: Side-by-Side Hero & Extremes */
@@ -1627,7 +1633,7 @@ html, body {
     display: grid;
     grid-template-columns: 1.15fr 1fr;
     gap: 20px;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
     align-items: stretch;
   }
 
@@ -1646,25 +1652,25 @@ html, body {
   }
 
   .card-chart .chart-container {
-    height: 220px;
+    height: 240px;
   }
 
   /* Add Entry Form 2-Column Responsive Layout */
   .form-desktop-card {
-    max-width: 780px;
+    max-width: 860px;
     margin: 0 auto;
-    padding: 28px 36px;
+    padding: 32px 40px;
   }
 
   .form-grid-2col {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 18px;
+    gap: 20px;
   }
 
   .form-highlight-row {
     align-items: stretch;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
   }
 
   .unit-price-preview,
@@ -1679,12 +1685,12 @@ html, body {
     flex-direction: row;
     align-items: center;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 14px;
     background-color: var(--bg-card);
-    padding: 14px 18px;
+    padding: 16px 20px;
     border-radius: var(--radius-lg);
     border: 1px solid var(--border-color);
-    margin-bottom: 20px;
+    margin-bottom: 22px;
   }
 
   .search-box {
@@ -1704,11 +1710,11 @@ html, body {
     margin-top: 2px;
   }
 
-  /* Records: Responsive Multi-Column Cards Grid */
+  /* Records: Fluid Multi-Column Cards Grid */
   #records-list-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-    gap: 18px;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 20px;
   }
 
   .record-card {
@@ -1738,7 +1744,7 @@ html, body {
 }
 
 /* ==========================================================================
-   WIDE DESKTOP (>= 1200px)
+   WIDE & ULTRA-WIDE DESKTOP (>= 1200px and >= 1600px)
    ========================================================================== */
 @media (min-width: 1200px) {
   .main-content {
@@ -1746,6 +1752,22 @@ html, body {
   }
 
   #records-list-container {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 22px;
+  }
+}
+
+@media (min-width: 1600px) {
+  .main-content {
+    padding: 40px 60px;
+  }
+
+  #records-list-container {
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 24px;
+  }
+
+  .form-desktop-card {
+    max-width: 960px;
   }
 }
