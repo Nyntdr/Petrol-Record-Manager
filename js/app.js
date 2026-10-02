@@ -148,8 +148,11 @@ function setupEventListeners() {
     });
   });
 
-  // Top App Bar Theme Toggle
-  document.getElementById('btn-theme-toggle').addEventListener('click', toggleThemeHeader);
+  // Top App Bar & Sidebar Theme Toggles
+  const topThemeBtn = document.getElementById('btn-theme-toggle');
+  const sidebarThemeBtn = document.getElementById('btn-sidebar-theme-toggle');
+  if (topThemeBtn) topThemeBtn.addEventListener('click', toggleThemeHeader);
+  if (sidebarThemeBtn) sidebarThemeBtn.addEventListener('click', toggleThemeHeader);
 
   // System Theme Preference Change
   if (window.matchMedia) {

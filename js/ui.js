@@ -1,6 +1,6 @@
 /**
  * FuelTrack - UI & View Rendering Module
- * Manages view switching, card rendering, SVG chart creation,
+ * Manages view switching, card rendering, responsive SVG charts,
  * themes, toast notifications, and modal dialogs.
  */
 'use strict';
@@ -118,19 +118,57 @@ function renderDashboard() {
   const monthlySpend = getMonthlySpending(calcRecords);
 
   let html = `
-    <!-- Hero Spending Card -->
-    <div class="hero-stat-card">
-      <div class="hero-label">Total Fuel Expenditure</div>
-      <div class="hero-value">${formatCurrency(totalCost)}</div>
-      <div class="hero-sub">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>
-        </svg>
-        <span>${calcRecords.length} fills recorded across ${formatNumber(totalDistance, 0)} ${prefs.distanceUnit}</span>
+    <!-- Top Row: Hero Spending Card & Extremes Card (Side-by-side on desktop) -->
+    <div class="dashboard-hero-row">
+      <div class="hero-stat-card">
+        <div class="hero-label">Total Fuel Expenditure</div>
+        <div class="hero-value">${formatCurrency(totalCost)}</div>
+        <div class="hero-sub">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>
+          </svg>
+          <span>${calcRecords.length} fills recorded across ${formatNumber(totalDistance, 0)} ${prefs.distanceUnit}</span>
+        </div>
+      </div>
+
+      <div class="card card-extremes">
+        <h3 class="card-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
+          </svg>
+          Efficiency Extremes
+        </h3>
+        <div class="extremes-grid">
+          <div class="extreme-box best">
+            <div class="extreme-tag">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Best Leg
+            </div>
+            <div class="extreme-val">
+              ${bestLeg ? formatEfficiencyValue(bestLeg).text : '—'}
+            </div>
+            <div class="extreme-meta" title="${bestLeg ? escapeHtml(bestLeg.station || 'Fuel Station') : ''}">
+              ${bestLeg ? `${formatDateDisplay(bestLeg.date).split(',')[0]} • ${escapeHtml(bestLeg.station || 'Station')}` : 'Requires 2 full fills'}
+            </div>
+          </div>
+
+          <div class="extreme-box worst">
+            <div class="extreme-tag">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              Worst Leg
+            </div>
+            <div class="extreme-val">
+              ${worstLeg ? formatEfficiencyValue(worstLeg).text : '—'}
+            </div>
+            <div class="extreme-meta" title="${worstLeg ? escapeHtml(worstLeg.station || 'Fuel Station') : ''}">
+              ${worstLeg ? `${formatDateDisplay(worstLeg.date).split(',')[0]} • ${escapeHtml(worstLeg.station || 'Station')}` : 'Requires 2 full fills'}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- 2x2 Stats Grid -->
+    <!-- 4 Stats Grid (4 columns on desktop, 2x2 on mobile) -->
     <div class="stats-grid">
       <div class="mini-stat-card">
         <div class="mini-stat-label">
@@ -169,45 +207,8 @@ function renderDashboard() {
       </div>
     </div>
 
-    <!-- Efficiency Extremes Card -->
-    <div class="card">
-      <h3 class="card-title">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
-        </svg>
-        Efficiency Extremes
-      </h3>
-      <div class="extremes-grid">
-        <div class="extreme-box best">
-          <div class="extreme-tag">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            Best Leg
-          </div>
-          <div class="extreme-val">
-            ${bestLeg ? formatEfficiencyValue(bestLeg).text : '—'}
-          </div>
-          <div class="extreme-meta" title="${bestLeg ? escapeHtml(bestLeg.station || 'Fuel Station') : ''}">
-            ${bestLeg ? `${formatDateDisplay(bestLeg.date).split(',')[0]} • ${escapeHtml(bestLeg.station || 'Station')}` : 'Requires 2 full fills'}
-          </div>
-        </div>
-
-        <div class="extreme-box worst">
-          <div class="extreme-tag">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            Worst Leg
-          </div>
-          <div class="extreme-val">
-            ${worstLeg ? formatEfficiencyValue(worstLeg).text : '—'}
-          </div>
-          <div class="extreme-meta" title="${worstLeg ? escapeHtml(worstLeg.station || 'Fuel Station') : ''}">
-            ${worstLeg ? `${formatDateDisplay(worstLeg.date).split(',')[0]} • ${escapeHtml(worstLeg.station || 'Station')}` : 'Requires 2 full fills'}
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- Pure CSS/SVG Monthly Spending Chart -->
-    <div class="card">
+    <div class="card card-chart">
       <h3 class="card-title">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
@@ -228,17 +229,17 @@ function renderDashboard() {
  */
 function generateMonthlySvgChart(monthlyData) {
   const maxVal = Math.max(...monthlyData.map(d => d.amount), 50);
-  const width = 380;
-  const height = 180;
-  const padTop = 24;
+  const width = 480;
+  const height = 190;
+  const padTop = 26;
   const padBottom = 28;
-  const padLeft = 14;
-  const padRight = 14;
+  const padLeft = 16;
+  const padRight = 16;
   const plotHeight = height - padTop - padBottom;
   const plotWidth = width - padLeft - padRight;
   const barCount = monthlyData.length;
   const colWidth = plotWidth / barCount;
-  const barWidth = 32;
+  const barWidth = 38;
 
   let gridLines = '';
   for (let p = 0.25; p <= 1.0; p += 0.25) {
@@ -281,7 +282,7 @@ function generateMonthlySvgChart(monthlyData) {
   });
 
   return `
-    <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
+    <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="xMidYMid meet">
       <defs>
         <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stop-color="#06b6d4" />
@@ -429,7 +430,7 @@ function renderRecords() {
 
   if (calcRecords.length === 0) {
     container.innerHTML = `
-      <div class="empty-state">
+      <div class="empty-state" style="grid-column: 1 / -1;">
         <div class="empty-state-icon">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 22h12M4 9h10M4 22V4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v18"/>
@@ -492,7 +493,7 @@ function renderRecords() {
 
   if (displayList.length === 0) {
     container.innerHTML = `
-      <div class="empty-state">
+      <div class="empty-state" style="grid-column: 1 / -1;">
         <h3 class="empty-state-title">No Matching Records</h3>
         <p class="empty-state-desc">No records match your active search and date filters.</p>
         <button type="button" class="btn btn-secondary" onclick="clearAllFilters()">Reset Filters</button>
@@ -603,7 +604,12 @@ function updateSettingsUI() {
     btn.classList.toggle('active', btn.getAttribute('data-theme') === prefs.theme);
   });
 
-  document.getElementById('top-units-badge').textContent = `${prefs.distanceUnit} · ${prefs.volumeUnit}`;
+  const formattedUnit = `${prefs.distanceUnit} · ${prefs.volumeUnit}`;
+  const topBadge = document.getElementById('top-units-badge');
+  const sidebarBadge = document.getElementById('sidebar-units-badge');
+  if (topBadge) topBadge.textContent = formattedUnit;
+  if (sidebarBadge) sidebarBadge.textContent = formattedUnit;
+
   document.getElementById('addon-distance-unit').textContent = prefs.distanceUnit;
   document.getElementById('addon-volume-unit').textContent = prefs.volumeUnit;
   document.getElementById('addon-currency').textContent = prefs.currencySymbol;
@@ -779,21 +785,25 @@ function applyTheme(themeChoice) {
     resolved = themeChoice;
   }
 
-  if (resolved === 'light') {
+  const isLight = resolved === 'light';
+  if (isLight) {
     document.documentElement.setAttribute('data-theme', 'light');
-    document.getElementById('theme-icon-sun').style.display = 'none';
-    document.getElementById('theme-icon-moon').style.display = 'block';
     updateMetaThemeColor('#ffffff');
   } else {
     document.documentElement.removeAttribute('data-theme');
-    document.getElementById('theme-icon-sun').style.display = 'block';
-    document.getElementById('theme-icon-moon').style.display = 'none';
     updateMetaThemeColor('#1e293b');
   }
+
+  document.querySelectorAll('.theme-icon-sun').forEach(el => {
+    el.style.display = isLight ? 'none' : 'block';
+  });
+  document.querySelectorAll('.theme-icon-moon').forEach(el => {
+    el.style.display = isLight ? 'block' : 'none';
+  });
 }
 
 /**
- * Toggle theme from Top Bar icon button
+ * Toggle theme from Top Bar or Sidebar icon button
  */
 function toggleThemeHeader() {
   const current = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';

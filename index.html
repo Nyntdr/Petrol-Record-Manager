@@ -17,7 +17,7 @@
 <body>
   <div class="app-viewport">
 
-    <!-- Top App Bar -->
+    <!-- Mobile Top App Bar (Visible on mobile viewports < 768px) -->
     <header class="top-app-bar" role="banner">
       <div class="brand-wrap">
         <div class="brand-icon-box" aria-hidden="true">
@@ -34,16 +34,82 @@
       <div class="top-actions">
         <span class="badge-units" id="top-units-badge" aria-label="Active measurement units">km · L</span>
         <button class="theme-toggle-btn" id="btn-theme-toggle" aria-label="Toggle dark and light theme" title="Toggle theme">
-          <!-- Sun/Moon SVG -->
-          <svg id="theme-icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+          <svg class="theme-icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
             <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
           </svg>
-          <svg id="theme-icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg class="theme-icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
           </svg>
         </button>
       </div>
     </header>
+
+    <!-- Navigation (Transforms into Desktop Sidebar on >= 768px, Bottom Nav on < 768px) -->
+    <nav class="bottom-nav" role="navigation" aria-label="Main Navigation">
+      <!-- Desktop Sidebar Brand Header -->
+      <div class="sidebar-brand">
+        <div class="brand-icon-box" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 22h12M4 9h10M4 22V4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v18"/>
+            <path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"/>
+            <circle cx="9" cy="6" r="1.5" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="brand-title">Fuel<span>Track</span></div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="sidebar-nav-links">
+        <button class="nav-btn active" data-view="dashboard" aria-label="Dashboard">
+          <div class="nav-icon-wrap">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+            </svg>
+          </div>
+          <span class="nav-label">Dashboard</span>
+        </button>
+
+        <button class="nav-btn nav-add-btn" data-view="add" aria-label="Add Fuel Entry">
+          <div class="nav-icon-wrap">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+          </div>
+          <span class="nav-label">Add Entry</span>
+        </button>
+
+        <button class="nav-btn" data-view="records" aria-label="Fuel Records">
+          <div class="nav-icon-wrap">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+            </svg>
+          </div>
+          <span class="nav-label">Records</span>
+        </button>
+
+        <button class="nav-btn" data-view="settings" aria-label="Settings">
+          <div class="nav-icon-wrap">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/>
+            </svg>
+          </div>
+          <span class="nav-label">Settings</span>
+        </button>
+      </div>
+
+      <!-- Desktop Sidebar Footer -->
+      <div class="sidebar-footer">
+        <span class="badge-units" id="sidebar-units-badge" aria-label="Active measurement units">km · L</span>
+        <button class="theme-toggle-btn" id="btn-sidebar-theme-toggle" aria-label="Toggle theme" title="Toggle theme">
+          <svg class="theme-icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+            <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+          </svg>
+          <svg class="theme-icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+      </div>
+    </nav>
 
     <!-- Main Content Area -->
     <main class="main-content" id="main-scroll-area">
@@ -75,74 +141,77 @@
           </div>
         </div>
 
-        <form id="fuel-form" class="card" novalidate>
-          <!-- Date & Time Input -->
-          <div class="form-group">
-            <label class="form-label" for="field-date">Date & Time *</label>
-            <div class="input-wrapper">
-              <input type="datetime-local" class="input-field" id="field-date" required>
+        <form id="fuel-form" class="card form-desktop-card" novalidate>
+          <!-- Row 1: Date & Current Odometer -->
+          <div class="form-grid-2col">
+            <div class="form-group">
+              <label class="form-label" for="field-date">Date & Time *</label>
+              <div class="input-wrapper">
+                <input type="datetime-local" class="input-field" id="field-date" required>
+              </div>
+              <div class="error-text" id="err-date">Please select a valid date and time.</div>
             </div>
-            <div class="error-text" id="err-date">Please select a valid date and time.</div>
+
+            <div class="form-group">
+              <label class="form-label" for="field-odometer">Current Odometer *</label>
+              <div class="input-wrapper">
+                <input type="number" step="any" min="0" class="input-field" id="field-odometer" placeholder="e.g. 45280" required inputmode="decimal">
+                <span class="input-addon-right" id="addon-distance-unit">km</span>
+              </div>
+              <div class="helper-text" id="odometer-helper">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                </svg>
+                <span id="odometer-prev-text">Last: None logged yet</span>
+              </div>
+              <div class="error-text" id="err-odometer">Odometer reading must be higher than previous record.</div>
+            </div>
           </div>
 
-          <!-- Odometer Input -->
-          <div class="form-group">
-            <label class="form-label" for="field-odometer">Current Odometer *</label>
-            <div class="input-wrapper">
-              <input type="number" step="any" min="0" class="input-field" id="field-odometer" placeholder="e.g. 45280" required inputmode="decimal">
-              <span class="input-addon-right" id="addon-distance-unit">km</span>
+          <!-- Row 2: Fuel Volume & Total Cost -->
+          <div class="form-grid-2col">
+            <div class="form-group">
+              <label class="form-label" for="field-volume">Fuel Volume *</label>
+              <div class="input-wrapper">
+                <input type="number" step="0.01" min="0.01" class="input-field" id="field-volume" placeholder="e.g. 35.2" required inputmode="decimal">
+                <span class="input-addon-right" id="addon-volume-unit">L</span>
+              </div>
+              <div class="error-text" id="err-volume">Volume pumped must be greater than zero.</div>
             </div>
-            <div class="helper-text" id="odometer-helper">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-              </svg>
-              <span id="odometer-prev-text">Last: None logged yet</span>
+
+            <div class="form-group">
+              <label class="form-label" for="field-cost">Total Cost *</label>
+              <div class="input-wrapper">
+                <input type="number" step="0.01" min="0.01" class="input-field" id="field-cost" placeholder="e.g. 52.80" required inputmode="decimal">
+                <span class="input-addon-right" id="addon-currency">USD ($)</span>
+              </div>
+              <div class="error-text" id="err-cost">Total cost must be greater than zero.</div>
             </div>
-            <div class="error-text" id="err-odometer">Odometer reading must be higher than previous record.</div>
           </div>
 
-          <!-- Fuel Volume Input -->
-          <div class="form-group">
-            <label class="form-label" for="field-volume">Fuel Volume *</label>
-            <div class="input-wrapper">
-              <input type="number" step="0.01" min="0.01" class="input-field" id="field-volume" placeholder="e.g. 35.2" required inputmode="decimal">
-              <span class="input-addon-right" id="addon-volume-unit">L</span>
+          <!-- Row 3: Live Unit Price & Full Tank Switch -->
+          <div class="form-grid-2col form-highlight-row">
+            <div class="unit-price-preview" id="unit-price-box">
+              <div class="unit-price-label">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                </svg>
+                <span>Calculated Unit Price:</span>
+              </div>
+              <div class="unit-price-value" id="unit-price-val">—</div>
             </div>
-            <div class="error-text" id="err-volume">Volume pumped must be greater than zero.</div>
-          </div>
 
-          <!-- Total Cost Input -->
-          <div class="form-group">
-            <label class="form-label" for="field-cost">Total Cost *</label>
-            <div class="input-wrapper">
-              <input type="number" step="0.01" min="0.01" class="input-field" id="field-cost" placeholder="e.g. 52.80" required inputmode="decimal">
-              <span class="input-addon-right" id="addon-currency">USD ($)</span>
-            </div>
-            <div class="error-text" id="err-cost">Total cost must be greater than zero.</div>
+            <label class="switch-row" for="field-fulltank">
+              <div class="switch-info">
+                <div class="switch-title">Filled to full tank</div>
+                <div class="switch-sub">Required for accurate fuel economy calculation</div>
+              </div>
+              <div class="toggle-switch">
+                <input type="checkbox" id="field-fulltank" checked>
+                <span class="toggle-slider"></span>
+              </div>
+            </label>
           </div>
-
-          <!-- Live Unit Price Tag -->
-          <div class="unit-price-preview" id="unit-price-box">
-            <div class="unit-price-label">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-              </svg>
-              <span>Calculated Unit Price:</span>
-            </div>
-            <div class="unit-price-value" id="unit-price-val">—</div>
-          </div>
-
-          <!-- Full Tank Toggle Switch -->
-          <label class="switch-row" for="field-fulltank">
-            <div class="switch-info">
-              <div class="switch-title">Filled to full tank</div>
-              <div class="switch-sub">Required for accurate fuel economy calculation</div>
-            </div>
-            <div class="toggle-switch">
-              <input type="checkbox" id="field-fulltank" checked>
-              <span class="toggle-slider"></span>
-            </div>
-          </label>
 
           <!-- Collapsible Optional Details -->
           <button type="button" class="accordion-trigger" id="btn-toggle-accordion" aria-expanded="false">
@@ -153,21 +222,23 @@
           </button>
 
           <div class="accordion-content" id="accordion-optional-fields">
-            <!-- Gas Station -->
-            <div class="form-group">
-              <label class="form-label" for="field-station">Fuel Station</label>
-              <input type="text" class="input-field" id="field-station" placeholder="e.g. Shell Main St, BP, Chevron">
-            </div>
+            <div class="form-grid-2col">
+              <!-- Gas Station -->
+              <div class="form-group">
+                <label class="form-label" for="field-station">Fuel Station</label>
+                <input type="text" class="input-field" id="field-station" placeholder="e.g. Shell Main St, BP, Chevron">
+              </div>
 
-            <!-- Fuel Grade with Quick Selection Pills -->
-            <div class="form-group">
-              <label class="form-label" for="field-fueltype">Fuel Grade / Octane</label>
-              <input type="text" class="input-field" id="field-fueltype" placeholder="e.g. Regular 95, Premium 98, Diesel">
-              <div class="chip-group">
-                <button type="button" class="chip-btn" data-val="Regular 95">Regular 95</button>
-                <button type="button" class="chip-btn" data-val="Premium 98">Premium 98</button>
-                <button type="button" class="chip-btn" data-val="Diesel">Diesel</button>
-                <button type="button" class="chip-btn" data-val="E85">E85</button>
+              <!-- Fuel Grade with Quick Selection Pills -->
+              <div class="form-group">
+                <label class="form-label" for="field-fueltype">Fuel Grade / Octane</label>
+                <input type="text" class="input-field" id="field-fueltype" placeholder="e.g. Regular 95, Premium 98, Diesel">
+                <div class="chip-group">
+                  <button type="button" class="chip-btn" data-val="Regular 95">Regular 95</button>
+                  <button type="button" class="chip-btn" data-val="Premium 98">Premium 98</button>
+                  <button type="button" class="chip-btn" data-val="Diesel">Diesel</button>
+                  <button type="button" class="chip-btn" data-val="E85">E85</button>
+                </div>
               </div>
             </div>
 
@@ -230,7 +301,7 @@
           </div>
         </div>
 
-        <!-- Record Cards List Container -->
+        <!-- Record Cards List Container (Responsive grid on desktop) -->
         <div id="records-list-container">
           <!-- Dynamically rendered via renderRecords() -->
         </div>
@@ -247,160 +318,122 @@
           </div>
         </div>
 
-        <!-- Preferences Card -->
-        <div class="card">
-          <h3 class="card-title">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-            </svg>
-            Unit Preferences
-          </h3>
-
-          <!-- Currency Symbol Selector -->
-          <div class="form-group">
-            <label class="form-label">Currency Symbol</label>
-            <div class="chip-group" id="currency-chip-group">
-              <button type="button" class="chip-btn" data-curr="$">$ (USD)</button>
-              <button type="button" class="chip-btn" data-curr="€">€ (EUR)</button>
-              <button type="button" class="chip-btn" data-curr="₹">₹ (INR)</button>
-              <button type="button" class="chip-btn" data-curr="Rs">Rs</button>
-              <button type="button" class="chip-btn" data-curr="£">£ (GBP)</button>
-            </div>
-            <div class="input-wrapper">
-              <input type="text" class="input-field" id="setting-custom-currency" placeholder="Or enter custom symbol (e.g. A$, C$, CHF)">
-            </div>
-          </div>
-
-          <!-- Unit System Toggle (Metric vs Imperial) -->
-          <div class="form-group">
-            <label class="form-label">Measurement System</label>
-            <div class="segmented-control" id="seg-unit-system">
-              <button type="button" class="segmented-btn" data-system="metric">Metric (km · L)</button>
-              <button type="button" class="segmented-btn" data-system="imperial">Imperial (miles · gal)</button>
-            </div>
-          </div>
-
-          <!-- Efficiency Display Format -->
-          <div class="form-group">
-            <label class="form-label">Efficiency Format</label>
-            <div class="segmented-control" id="seg-efficiency-format">
-              <button type="button" class="segmented-btn" data-eff="km/L">km/L</button>
-              <button type="button" class="segmented-btn" data-eff="L/100km">L/100km</button>
-              <button type="button" class="segmented-btn" data-eff="MPG">MPG (US)</button>
-            </div>
-          </div>
-
-          <!-- Theme Preference -->
-          <div class="form-group">
-            <label class="form-label">Theme Mode</label>
-            <div class="segmented-control" id="seg-theme-mode">
-              <button type="button" class="segmented-btn" data-theme="dark">Dark</button>
-              <button type="button" class="segmented-btn" data-theme="light">Light</button>
-              <button type="button" class="segmented-btn" data-theme="system">System</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Data Backup & Portability Card -->
-        <div class="card">
-          <h3 class="card-title">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
-            </svg>
-            Data Backup & Restore
-          </h3>
-
-          <div style="display:flex; flex-direction:column; gap:10px;">
-            <button type="button" class="btn btn-secondary" id="btn-export-json">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/>
+        <div class="settings-desktop-grid">
+          <!-- Preferences Card -->
+          <div class="card settings-card-primary">
+            <h3 class="card-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
               </svg>
-              Export JSON Backup
-            </button>
+              Unit Preferences
+            </h3>
 
-            <button type="button" class="btn btn-secondary" id="btn-export-csv">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/>
-              </svg>
-              Export Spreadsheet (CSV)
-            </button>
+            <!-- Currency Symbol Selector -->
+            <div class="form-group">
+              <label class="form-label">Currency Symbol</label>
+              <div class="chip-group" id="currency-chip-group">
+                <button type="button" class="chip-btn" data-curr="$">$ (USD)</button>
+                <button type="button" class="chip-btn" data-curr="€">€ (EUR)</button>
+                <button type="button" class="chip-btn" data-curr="₹">₹ (INR)</button>
+                <button type="button" class="chip-btn" data-curr="Rs">Rs</button>
+                <button type="button" class="chip-btn" data-curr="£">£ (GBP)</button>
+              </div>
+              <div class="input-wrapper">
+                <input type="text" class="input-field" id="setting-custom-currency" placeholder="Or enter custom symbol (e.g. A$, C$, CHF)">
+              </div>
+            </div>
 
-            <input type="file" id="file-import-json" class="file-input-hidden" accept=".json,application/json">
-            <button type="button" class="btn btn-secondary" id="btn-trigger-import">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
-              </svg>
-              Import JSON Backup
-            </button>
+            <!-- Unit System Toggle (Metric vs Imperial) -->
+            <div class="form-group">
+              <label class="form-label">Measurement System</label>
+              <div class="segmented-control" id="seg-unit-system">
+                <button type="button" class="segmented-btn" data-system="metric">Metric (km · L)</button>
+                <button type="button" class="segmented-btn" data-system="imperial">Imperial (miles · gal)</button>
+              </div>
+            </div>
 
-            <button type="button" class="btn btn-secondary" id="btn-load-sample" style="border-color:var(--primary); color:var(--primary);">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-              </svg>
-              Load Sample Demo Data (4 Fill-ups)
-            </button>
+            <!-- Efficiency Display Format -->
+            <div class="form-group">
+              <label class="form-label">Efficiency Format</label>
+              <div class="segmented-control" id="seg-efficiency-format">
+                <button type="button" class="segmented-btn" data-eff="km/L">km/L</button>
+                <button type="button" class="segmented-btn" data-eff="L/100km">L/100km</button>
+                <button type="button" class="segmented-btn" data-eff="MPG">MPG (US)</button>
+              </div>
+            </div>
+
+            <!-- Theme Preference -->
+            <div class="form-group">
+              <label class="form-label">Theme Mode</label>
+              <div class="segmented-control" id="seg-theme-mode">
+                <button type="button" class="segmented-btn" data-theme="dark">Dark</button>
+                <button type="button" class="segmented-btn" data-theme="light">Light</button>
+                <button type="button" class="segmented-btn" data-theme="system">System</button>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <!-- Danger Zone Card -->
-        <div class="card" style="border-color: rgba(239, 68, 68, 0.35);">
-          <h3 class="card-title" style="color: var(--danger);">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
-            </svg>
-            Danger Zone
-          </h3>
-          <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:12px;">
-            Permanently erase all local fill-up records and reset configuration to initial state.
-          </p>
-          <button type="button" class="btn btn-outline-danger" id="btn-factory-reset">Factory Reset</button>
+          <!-- Secondary Column: Backup & Danger Zone -->
+          <div class="settings-col-secondary">
+            <!-- Data Backup & Portability Card -->
+            <div class="card">
+              <h3 class="card-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                Data Backup & Restore
+              </h3>
+
+              <div style="display:flex; flex-direction:column; gap:10px;">
+                <button type="button" class="btn btn-secondary" id="btn-export-json">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/>
+                  </svg>
+                  Export JSON Backup
+                </button>
+
+                <button type="button" class="btn btn-secondary" id="btn-export-csv">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/>
+                  </svg>
+                  Export Spreadsheet (CSV)
+                </button>
+
+                <input type="file" id="file-import-json" class="file-input-hidden" accept=".json,application/json">
+                <button type="button" class="btn btn-secondary" id="btn-trigger-import">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+                  </svg>
+                  Import JSON Backup
+                </button>
+
+                <button type="button" class="btn btn-secondary" id="btn-load-sample" style="border-color:var(--primary); color:var(--primary);">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                  </svg>
+                  Load Sample Demo Data (4 Fill-ups)
+                </button>
+              </div>
+            </div>
+
+            <!-- Danger Zone Card -->
+            <div class="card" style="border-color: rgba(239, 68, 68, 0.35);">
+              <h3 class="card-title" style="color: var(--danger);">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+                Danger Zone
+              </h3>
+              <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:12px;">
+                Permanently erase all local fill-up records and reset configuration to initial state.
+              </p>
+              <button type="button" class="btn btn-outline-danger" id="btn-factory-reset">Factory Reset</button>
+            </div>
+          </div>
         </div>
       </section>
 
     </main>
-
-    <!-- Bottom Navigation Bar -->
-    <nav class="bottom-nav" role="navigation" aria-label="Main Navigation">
-      <button class="nav-btn active" data-view="dashboard" aria-label="Dashboard">
-        <div class="nav-icon-wrap">
-          <!-- Speedometer / Gauge Icon -->
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
-          </svg>
-        </div>
-        <span class="nav-label">Dashboard</span>
-      </button>
-
-      <button class="nav-btn nav-add-btn" data-view="add" aria-label="Add Fuel Entry">
-        <div class="nav-icon-wrap">
-          <!-- Plus Icon -->
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-          </svg>
-        </div>
-        <span class="nav-label">Add Entry</span>
-      </button>
-
-      <button class="nav-btn" data-view="records" aria-label="Fuel Records">
-        <div class="nav-icon-wrap">
-          <!-- List / History Icon -->
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
-          </svg>
-        </div>
-        <span class="nav-label">Records</span>
-      </button>
-
-      <button class="nav-btn" data-view="settings" aria-label="Settings">
-        <div class="nav-icon-wrap">
-          <!-- Sliders Icon -->
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/>
-          </svg>
-        </div>
-        <span class="nav-label">Settings</span>
-      </button>
-    </nav>
 
     <!-- Shared Modal Dialog Backdrop -->
     <div class="modal-backdrop" id="app-modal-backdrop" role="dialog" aria-modal="true">
