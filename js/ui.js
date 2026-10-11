@@ -299,7 +299,6 @@ function setupFormDefaults() {
   const costField = document.getElementById('field-cost');
   const fullTankSwitch = document.getElementById('field-fulltank');
   const stationField = document.getElementById('field-station');
-  const fuelTypeField = document.getElementById('field-fueltype');
   const notesField = document.getElementById('field-notes');
 
   dateField.value = getLocalDatetimeString();
@@ -308,7 +307,6 @@ function setupFormDefaults() {
   costField.value = '';
   fullTankSwitch.checked = true;
   stationField.value = '';
-  fuelTypeField.value = '';
   notesField.value = '';
 
   clearFormErrors();
@@ -339,10 +337,9 @@ function populateFormForEdit(recordId) {
   document.getElementById('field-cost').value = record.totalCost;
   document.getElementById('field-fulltank').checked = Boolean(record.isFullTank);
   document.getElementById('field-station').value = record.station || '';
-  document.getElementById('field-fueltype').value = record.fuelType || '';
   document.getElementById('field-notes').value = record.notes || '';
 
-  if (record.station || record.fuelType || record.notes) {
+  if (record.station || record.notes) {
     document.getElementById('accordion-optional-fields').classList.add('open');
     document.getElementById('btn-toggle-accordion').classList.add('open');
   }
@@ -411,16 +408,180 @@ function clearFormErrors() {
   });
 }
 
+// View mode and pagination state for records
+let recordsViewMode = localStorage.getItem('fueltrack_records_view_mode') || 'cards';
+let recordsCurrentPage = 1;
+const RECORDS_PER_PAGE = 24;
+
 /**
- * Render the Records history screen with search and filters
+ * Switch records view mode between 'cards' and 'table'
+ */
+function setRecordsViewMode(mode) {
+  recordsViewMode = mode;
+  localStorage.setItem('fueltrack_records_view_mode', mode);
+  updateViewToggleButtons();
+  renderRecords();
+}
+
+/**
+ * Update active button states on view switcher
+ */
+function updateViewToggleButtons() {
+  const btnCards = document.getElementById('btn-view-cards');
+  const btnTable = document.getElementById('btn-view-table');
+  if (btnCards) btnCards.classList.toggle('active', recordsViewMode === 'cards');
+  if (btnTable) btnTable.classList.toggle('active', recordsViewMode === 'table');
+}
+
+/**
+ * Change records pagination page
+ */
+function changeRecordsPage(page) {
+  recordsCurrentPage = page;
+  renderRecords();
+  const mainArea = document.getElementById('main-scroll-area');
+  const recordsSection = document.getElementById('view-records');
+  if (mainArea && recordsSection) {
+    mainArea.scrollTo({ top: recordsSection.offsetTop - 10, behavior: 'smooth' });
+  }
+}
+
+/**
+ * Display comprehensive full details modal for a specific fuel record
+ */
+function showRecordDetailsModal(recordId) {
+  const calcRecords = computeCalculatedRecords(records);
+  const rec = calcRecords.find(r => r.id === recordId);
+  if (!rec) return;
+
+  const eff = formatEfficiencyValue(rec);
+  let effBadgeClass = 'active-mileage';
+  if (eff.isPartial) effBadgeClass = 'partial';
+  if (eff.isBaseline) effBadgeClass = 'baseline';
+
+  const runningCostPerDist = (rec.deltaOdo > 0 && rec.totalCost > 0)
+    ? `${prefs.currencySymbol}${(rec.totalCost / rec.deltaOdo).toFixed(2)} / ${prefs.distanceUnit}`
+    : null;
+
+  const bodyHtml = `
+    <div class="record-details-dialog-content">
+      <!-- Cost & Efficiency Top Banner -->
+      <div class="record-details-highlight-card">
+        <div class="record-details-cost-group">
+          <span class="detail-label">Total Spend</span>
+          <span class="detail-cost-value">${formatCurrency(rec.totalCost)}</span>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
+          <span class="detail-label">Calculated Economy</span>
+          <span class="efficiency-badge ${effBadgeClass}">
+            ${!eff.isPartial && !eff.isBaseline ? `
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            ` : ''}
+            ${eff.text}
+          </span>
+        </div>
+      </div>
+
+      <!-- Structured Grid of Key Metrics -->
+      <div class="record-details-grid">
+        <div class="record-detail-item">
+          <span class="detail-lbl">Date & Time</span>
+          <span class="detail-val">${formatDateDisplay(rec.date)}</span>
+        </div>
+        <div class="record-detail-item">
+          <span class="detail-lbl">Odometer Reading</span>
+          <span class="detail-val">${formatNumber(rec.odometer, 0)} ${prefs.distanceUnit}</span>
+        </div>
+        <div class="record-detail-item">
+          <span class="detail-lbl">Trip Distance</span>
+          <span class="detail-val">
+            ${rec.deltaOdo > 0 ? `<span class="val-delta">+${formatNumber(rec.deltaOdo, 0)}</span> ${prefs.distanceUnit}` : '<span style="color:var(--text-muted);">Baseline Fill</span>'}
+          </span>
+        </div>
+        <div class="record-detail-item">
+          <span class="detail-lbl">Pumped Volume</span>
+          <span class="detail-val">${formatNumber(rec.volume, 2)} ${prefs.volumeUnit}</span>
+        </div>
+        <div class="record-detail-item">
+          <span class="detail-lbl">Unit Price</span>
+          <span class="detail-val">${formatCurrency(rec.unitPrice)} / ${prefs.volumeUnit}</span>
+        </div>
+        <div class="record-detail-item">
+          <span class="detail-lbl">Tank Status</span>
+          <span class="detail-val">
+            <span class="status-pill ${rec.isFullTank ? 'full' : 'partial'}">
+              ${rec.isFullTank ? 'Full Tank' : 'Partial Fill'}
+            </span>
+          </span>
+        </div>
+        <div class="record-detail-item">
+          <span class="detail-lbl">Fuel Station</span>
+          <span class="detail-val">${escapeHtml(rec.station || 'Not specified')}</span>
+        </div>
+        ${runningCostPerDist ? `
+          <div class="record-detail-item">
+            <span class="detail-lbl">Cost per ${prefs.distanceUnit}</span>
+            <span class="detail-val">${runningCostPerDist}</span>
+          </div>
+        ` : ''}
+      </div>
+
+      <!-- Notes Callout -->
+      ${rec.notes ? `
+        <div class="record-details-note-box">
+          <div class="note-box-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <span>Notes & Annotations</span>
+          </div>
+          <p class="note-box-text">${escapeHtml(rec.notes)}</p>
+        </div>
+      ` : ''}
+    </div>
+  `;
+
+  openModal({
+    title: 'Fuel Record Details',
+    bodyHtml: bodyHtml,
+    iconSvg: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 22h12M4 9h10M4 22V4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v18"/><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"/><circle cx="9" cy="6" r="1.5"/></svg>`,
+    iconClass: 'info',
+    wide: true,
+    buttons: [
+      {
+        text: 'Edit Record',
+        class: 'btn-primary',
+        onClick: () => {
+          closeModal();
+          populateFormForEdit(rec.id);
+        }
+      },
+      {
+        text: 'Delete',
+        class: 'btn-outline-danger',
+        onClick: () => {
+          closeModal();
+          promptDeleteRecord(rec.id);
+        }
+      },
+      {
+        text: 'Close',
+        class: 'btn-secondary',
+        onClick: closeModal
+      }
+    ]
+  });
+}
+
+/**
+ * Render the Records history screen with search, date filters, view modes & pagination
  */
 function renderRecords() {
   const container = document.getElementById('records-list-container');
   const calcRecords = computeCalculatedRecords(records);
+  updateViewToggleButtons();
 
   if (calcRecords.length === 0) {
     container.innerHTML = `
-      <div class="empty-state" style="grid-column: 1 / -1;">
+      <div class="empty-state">
         <div class="empty-state-icon">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 22h12M4 9h10M4 22V4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v18"/>
@@ -454,9 +615,8 @@ function renderRecords() {
   const filtered = calcRecords.filter(rec => {
     if (searchTerms) {
       const station = (rec.station || '').toLowerCase();
-      const fuel = (rec.fuelType || '').toLowerCase();
       const notes = (rec.notes || '').toLowerCase();
-      if (!station.includes(searchTerms) && !fuel.includes(searchTerms) && !notes.includes(searchTerms)) {
+      if (!station.includes(searchTerms) && !notes.includes(searchTerms)) {
         return false;
       }
     }
@@ -474,16 +634,15 @@ function renderRecords() {
   });
 
   const displayList = filtered.slice().reverse();
-
+  const totalItems = displayList.length;
   const isFiltered = Boolean(filters.search || filters.startDate || filters.endDate);
-  document.getElementById('filter-count-label').textContent = isFiltered 
-    ? `Showing ${displayList.length} of ${records.length} records`
-    : `Showing all ${records.length} records`;
+
   document.getElementById('btn-clear-all-filters').style.display = isFiltered ? 'inline-block' : 'none';
 
-  if (displayList.length === 0) {
+  if (totalItems === 0) {
+    document.getElementById('filter-count-label').textContent = '0 matching records';
     container.innerHTML = `
-      <div class="empty-state" style="grid-column: 1 / -1;">
+      <div class="empty-state">
         <h3 class="empty-state-title">No Matching Records</h3>
         <p class="empty-state-desc">No records match your active search and date filters.</p>
         <button type="button" class="btn btn-secondary" onclick="clearAllFilters()">Reset Filters</button>
@@ -492,82 +651,261 @@ function renderRecords() {
     return;
   }
 
-  let cardsHtml = '';
-  displayList.forEach(rec => {
-    const eff = formatEfficiencyValue(rec);
-    let effBadgeClass = 'active-mileage';
-    if (eff.isPartial) effBadgeClass = 'partial';
-    if (eff.isBaseline) effBadgeClass = 'baseline';
+  // Pagination calculation (24 records per page)
+  const totalPages = Math.ceil(totalItems / RECORDS_PER_PAGE) || 1;
+  if (recordsCurrentPage > totalPages) recordsCurrentPage = totalPages;
+  if (recordsCurrentPage < 1) recordsCurrentPage = 1;
 
-    cardsHtml += `
-      <article class="record-card" data-id="${rec.id}">
-        <!-- Top Row: Date, Station, Cost -->
-        <div class="record-top-row">
-          <div style="display:flex; align-items:center; gap:8px;">
-            <span class="record-date">${formatDateDisplay(rec.date)}</span>
-            ${rec.station ? `
-              <span class="record-station-badge" title="${escapeHtml(rec.station)}">
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                ${escapeHtml(rec.station)}
+  const startIndex = (recordsCurrentPage - 1) * RECORDS_PER_PAGE;
+  const endIndex = Math.min(startIndex + RECORDS_PER_PAGE, totalItems);
+  const pageRecords = displayList.slice(startIndex, endIndex);
+
+  document.getElementById('filter-count-label').textContent = isFiltered 
+    ? `Showing ${startIndex + 1}–${endIndex} of ${totalItems} filtered (${records.length} total)`
+    : `Showing ${startIndex + 1}–${endIndex} of ${totalItems} records`;
+
+  let mainContentHtml = '';
+
+  if (recordsViewMode === 'cards') {
+    // 1. CARDS VIEW
+    let cardsHtml = '<div class="records-cards-grid">';
+    pageRecords.forEach(rec => {
+      const eff = formatEfficiencyValue(rec);
+      let effBadgeClass = 'active-mileage';
+      if (eff.isPartial) effBadgeClass = 'partial';
+      if (eff.isBaseline) effBadgeClass = 'baseline';
+
+      cardsHtml += `
+        <article class="record-card" data-id="${rec.id}" onclick="showRecordDetailsModal('${rec.id}')" title="Click to view full record details">
+          <!-- Top Row: Date, Station, Cost -->
+          <div class="record-top-row">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="record-date">${formatDateDisplay(rec.date)}</span>
+              ${rec.station ? `
+                <span class="record-station-badge" title="${escapeHtml(rec.station)}">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  ${escapeHtml(rec.station)}
+                </span>
+              ` : ''}
+            </div>
+            <div class="record-total-cost">${formatCurrency(rec.totalCost)}</div>
+          </div>
+
+          <!-- Middle Row: Odometer, Delta Distance, Volume -->
+          <div class="record-middle-row">
+            <div class="record-stat-item">
+              <span class="lbl">Odometer</span>
+              <span class="val">${formatNumber(rec.odometer, 0)} <span style="font-size:0.75rem; color:var(--text-secondary);">${prefs.distanceUnit}</span></span>
+            </div>
+            <div class="record-stat-item">
+              <span class="lbl">Trip ΔOdo</span>
+              <span class="val">
+                ${rec.deltaOdo > 0 ? `<span class="val-delta">+${formatNumber(rec.deltaOdo, 0)}</span> ${prefs.distanceUnit}` : '<span style="color:var(--text-muted);">—</span>'}
               </span>
-            ` : ''}
+            </div>
+            <div class="record-stat-item">
+              <span class="lbl">Pumped</span>
+              <span class="val">${formatNumber(rec.volume, 2)} <span style="font-size:0.75rem; color:var(--text-secondary);">${prefs.volumeUnit}</span></span>
+            </div>
           </div>
-          <div class="record-total-cost">${formatCurrency(rec.totalCost)}</div>
-        </div>
 
-        <!-- Middle Row: Odometer, Delta Distance, Volume -->
-        <div class="record-middle-row">
-          <div class="record-stat-item">
-            <span class="lbl">Odometer</span>
-            <span class="val">${formatNumber(rec.odometer, 0)} <span style="font-size:0.75rem; color:var(--text-secondary);">${prefs.distanceUnit}</span></span>
-          </div>
-          <div class="record-stat-item">
-            <span class="lbl">Trip ΔOdo</span>
-            <span class="val">
-              ${rec.deltaOdo > 0 ? `<span class="val-delta">+${formatNumber(rec.deltaOdo, 0)}</span> ${prefs.distanceUnit}` : '<span style="color:var(--text-muted);">—</span>'}
+          <!-- Bottom Row: Efficiency Badge & Unit Price -->
+          <div class="record-bottom-row">
+            <span class="efficiency-badge ${effBadgeClass}">
+              ${!eff.isPartial && !eff.isBaseline ? `
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              ` : ''}
+              ${eff.text}
             </span>
+            <span class="record-unit-price">${formatCurrency(rec.unitPrice)} / ${prefs.volumeUnit}</span>
           </div>
-          <div class="record-stat-item">
-            <span class="lbl">Pumped</span>
-            <span class="val">${formatNumber(rec.volume, 2)} <span style="font-size:0.75rem; color:var(--text-secondary);">${prefs.volumeUnit}</span></span>
+
+          <!-- Optional Notes -->
+          ${rec.notes ? `
+            <div class="record-details-note">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <span>${escapeHtml(rec.notes)}</span>
+            </div>
+          ` : ''}
+
+          <!-- Quick Action Buttons -->
+          <div class="record-actions" onclick="event.stopPropagation()">
+            <button type="button" class="record-action-btn details-btn" onclick="showRecordDetailsModal('${rec.id}')" title="View fuel details" aria-label="View record details">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              Details
+            </button>
+            <button type="button" class="record-action-btn edit-btn" onclick="populateFormForEdit('${rec.id}')" title="Edit entry" aria-label="Edit record">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+              Edit
+            </button>
+            <button type="button" class="record-action-btn delete-btn" onclick="promptDeleteRecord('${rec.id}')" title="Delete entry" aria-label="Delete record">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              Delete
+            </button>
           </div>
-        </div>
-
-        <!-- Bottom Row: Efficiency Badge & Unit Price -->
-        <div class="record-bottom-row">
-          <span class="efficiency-badge ${effBadgeClass}">
-            ${!eff.isPartial && !eff.isBaseline ? `
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-            ` : ''}
-            ${eff.text}
-          </span>
-          <span class="record-unit-price">${formatCurrency(rec.unitPrice)} / ${prefs.volumeUnit}</span>
-        </div>
-
-        <!-- Optional Fuel Grade & Notes -->
-        ${rec.notes || (rec.fuelType && rec.fuelType !== 'Regular 95') ? `
-          <div class="record-details-note">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            <span>${rec.fuelType ? `<strong>${escapeHtml(rec.fuelType)}</strong> • ` : ''}${escapeHtml(rec.notes || '')}</span>
-          </div>
-        ` : ''}
-
-        <!-- Quick Action Buttons -->
-        <div class="record-actions">
-          <button type="button" class="record-action-btn edit-btn" onclick="populateFormForEdit('${rec.id}')">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
-            Edit
-          </button>
-          <button type="button" class="record-action-btn delete-btn" onclick="promptDeleteRecord('${rec.id}')">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-            Delete
-          </button>
-        </div>
-      </article>
+        </article>
+      `;
+    });
+    cardsHtml += '</div>';
+    mainContentHtml = cardsHtml;
+  } else {
+    // 2. TABULAR VIEW
+    let tableHtml = `
+      <div class="records-table-wrap">
+        <table class="records-table" aria-label="Fuel fill-up records table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Odometer</th>
+              <th>Trip Δ</th>
+              <th>Volume</th>
+              <th>Total Cost</th>
+              <th>Economy</th>
+              <th>Notes</th>
+              <th class="th-sticky-action" style="text-align:right;">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
     `;
-  });
 
-  container.innerHTML = cardsHtml;
+    pageRecords.forEach(rec => {
+      const eff = formatEfficiencyValue(rec);
+      let effBadgeClass = 'active-mileage';
+      if (eff.isPartial) effBadgeClass = 'partial';
+      if (eff.isBaseline) effBadgeClass = 'baseline';
+
+      tableHtml += `
+        <tr class="table-record-row" onclick="showRecordDetailsModal('${rec.id}')" title="Click row to view full record details">
+          <td>
+            <div class="table-date-cell">
+              <span class="cell-main">${formatDateDisplay(rec.date)}</span>
+              ${rec.station ? `<span class="cell-sub station-pill" title="${escapeHtml(rec.station)}">${escapeHtml(rec.station)}</span>` : ''}
+            </div>
+          </td>
+          <td>
+            <span class="cell-num">${formatNumber(rec.odometer, 0)}</span>
+            <span class="cell-unit">${prefs.distanceUnit}</span>
+          </td>
+          <td>
+            ${rec.deltaOdo > 0 
+              ? `<span class="val-delta">+${formatNumber(rec.deltaOdo, 0)} ${prefs.distanceUnit}</span>`
+              : '<span class="cell-muted">—</span>'
+            }
+          </td>
+          <td>
+            <span class="cell-num">${formatNumber(rec.volume, 2)}</span>
+            <span class="cell-unit">${prefs.volumeUnit}</span>
+          </td>
+          <td>
+            <span class="cell-bold">${formatCurrency(rec.totalCost)}</span>
+          </td>
+          <td>
+            <span class="efficiency-badge ${effBadgeClass}">
+              ${eff.text}
+            </span>
+          </td>
+          <td>
+            <span class="cell-note" title="${escapeHtml(rec.notes || '')}">
+              ${escapeHtml(rec.notes || '—')}
+            </span>
+          </td>
+          <td class="td-sticky-action" onclick="event.stopPropagation()">
+            <div class="table-row-actions">
+              <button type="button" class="table-action-btn view-details" onclick="showRecordDetailsModal('${rec.id}')" title="View details" aria-label="View record details">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              </button>
+              <button type="button" class="table-action-btn edit" onclick="populateFormForEdit('${rec.id}')" title="Edit entry" aria-label="Edit record">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+              </button>
+              <button type="button" class="table-action-btn delete" onclick="promptDeleteRecord('${rec.id}')" title="Delete entry" aria-label="Delete record">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `;
+    });
+
+    tableHtml += `
+          </tbody>
+        </table>
+      </div>
+    `;
+    mainContentHtml = tableHtml;
+  }
+
+  // 3. PAGINATION BAR
+  let paginationHtml = '';
+  if (totalPages > 1) {
+    let pagesButtonsHtml = '';
+    
+    // Previous button
+    pagesButtonsHtml += `
+      <button type="button" class="page-btn nav-arrow" ${recordsCurrentPage === 1 ? 'disabled' : ''} onclick="changeRecordsPage(${recordsCurrentPage - 1})" aria-label="Previous page">
+        ‹
+      </button>
+    `;
+
+    // Numeric page buttons
+    if (totalPages <= 7) {
+      for (let p = 1; p <= totalPages; p++) {
+        pagesButtonsHtml += `
+          <button type="button" class="page-btn ${p === recordsCurrentPage ? 'active' : ''}" onclick="changeRecordsPage(${p})">
+            ${p}
+          </button>
+        `;
+      }
+    } else {
+      // First page
+      pagesButtonsHtml += `
+        <button type="button" class="page-btn ${1 === recordsCurrentPage ? 'active' : ''}" onclick="changeRecordsPage(1)">1</button>
+      `;
+
+      if (recordsCurrentPage > 3) {
+        pagesButtonsHtml += `<span class="page-ellipsis">…</span>`;
+      }
+
+      const startWindow = Math.max(2, recordsCurrentPage - 1);
+      const endWindow = Math.min(totalPages - 1, recordsCurrentPage + 1);
+
+      for (let p = startWindow; p <= endWindow; p++) {
+        pagesButtonsHtml += `
+          <button type="button" class="page-btn ${p === recordsCurrentPage ? 'active' : ''}" onclick="changeRecordsPage(${p})">
+            ${p}
+          </button>
+        `;
+      }
+
+      if (recordsCurrentPage < totalPages - 2) {
+        pagesButtonsHtml += `<span class="page-ellipsis">…</span>`;
+      }
+
+      // Last page
+      pagesButtonsHtml += `
+        <button type="button" class="page-btn ${totalPages === recordsCurrentPage ? 'active' : ''}" onclick="changeRecordsPage(${totalPages})">${totalPages}</button>
+      `;
+    }
+
+    // Next button
+    pagesButtonsHtml += `
+      <button type="button" class="page-btn nav-arrow" ${recordsCurrentPage === totalPages ? 'disabled' : ''} onclick="changeRecordsPage(${recordsCurrentPage + 1})" aria-label="Next page">
+        ›
+      </button>
+    `;
+
+    paginationHtml = `
+      <div class="pagination-container" role="navigation" aria-label="Records pagination">
+        <div class="pagination-info">
+          Showing <strong>${startIndex + 1}–${endIndex}</strong> of <strong>${totalItems}</strong> records
+        </div>
+        <div class="pagination-controls">
+          ${pagesButtonsHtml}
+        </div>
+      </div>
+    `;
+  }
+
+  container.innerHTML = mainContentHtml + paginationHtml;
 }
 
 /**
@@ -636,44 +974,116 @@ function switchView(viewName) {
 }
 
 /**
+ * Generic Modal Dialog Opener
+ * Supports title, body HTML, icon SVG/class, dynamic action buttons, and width options.
+ */
+function openModal({ title = '', bodyHtml = '', iconSvg = '', iconClass = 'info', buttons = [], wide = false }) {
+  const modal = document.getElementById('app-modal-backdrop');
+  const dialog = document.getElementById('app-modal-dialog');
+  const icon = document.getElementById('modal-icon-container');
+  const titleEl = document.getElementById('modal-title-text');
+  const bodyEl = document.getElementById('modal-body-text');
+  const footer = document.getElementById('modal-footer-buttons');
+
+  if (!modal || !dialog) return;
+
+  if (icon) {
+    icon.className = `modal-icon-wrap ${iconClass}`;
+    icon.innerHTML = iconSvg || '';
+    icon.style.display = iconSvg ? 'flex' : 'none';
+  }
+
+  if (titleEl) titleEl.textContent = title;
+  if (bodyEl) bodyEl.innerHTML = bodyHtml;
+
+  if (footer) {
+    footer.innerHTML = '';
+    if (buttons && buttons.length > 0) {
+      buttons.forEach(btnConfig => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `btn ${btnConfig.class || 'btn-secondary'}`;
+        btn.textContent = btnConfig.text || 'OK';
+        btn.onclick = function() {
+          if (typeof btnConfig.onClick === 'function') {
+            btnConfig.onClick();
+          } else {
+            closeModal();
+          }
+        };
+        footer.appendChild(btn);
+      });
+    } else {
+      const closeBtn = document.createElement('button');
+      closeBtn.type = 'button';
+      closeBtn.className = 'btn btn-secondary';
+      closeBtn.textContent = 'Close';
+      closeBtn.onclick = closeModal;
+      footer.appendChild(closeBtn);
+    }
+  }
+
+  if (wide) {
+    dialog.classList.add('modal-dialog-wide');
+  } else {
+    dialog.classList.remove('modal-dialog-wide');
+  }
+
+  modal.classList.add('open');
+}
+
+/**
+ * Close active modal dialog
+ */
+function closeModal() {
+  const modal = document.getElementById('app-modal-backdrop');
+  if (modal) modal.classList.remove('open');
+}
+
+// Global exposure for event callbacks & external scripts
+window.openModal = openModal;
+window.closeModal = closeModal;
+window.showRecordDetailsModal = showRecordDetailsModal;
+
+/**
  * Open confirmation modal for deleting a record
  */
 function promptDeleteRecord(recordId) {
   const rec = records.find(r => r.id === recordId);
   if (!rec) return;
 
-  const modal = document.getElementById('app-modal-backdrop');
-  const icon = document.getElementById('modal-icon-container');
-  const title = document.getElementById('modal-title-text');
-  const body = document.getElementById('modal-body-text');
-  const footer = document.getElementById('modal-footer-buttons');
-
-  icon.className = 'modal-icon-wrap danger';
-  icon.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>`;
-  title.textContent = 'Delete Fill-Up Record?';
-  body.innerHTML = `
-    Are you sure you want to delete this record?<br><br>
-    <strong>Date:</strong> ${formatDateDisplay(rec.date)}<br>
-    <strong>Odometer:</strong> ${formatNumber(rec.odometer, 0)} ${prefs.distanceUnit}<br>
-    <strong>Cost:</strong> ${formatCurrency(rec.totalCost)}<br><br>
-    <span style="color:var(--danger); font-size:0.8rem;">This action cannot be undone.</span>
-  `;
-
-  footer.innerHTML = `
-    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-    <button type="button" class="btn btn-danger" id="btn-modal-confirm-delete">Delete</button>
-  `;
-
-  document.getElementById('btn-modal-confirm-delete').onclick = function() {
-    records = records.filter(r => r.id !== recordId);
-    saveRecords();
-    closeModal();
-    showToast('Record deleted', 'info');
-    renderRecords();
-    renderDashboard();
-  };
-
-  modal.classList.add('open');
+  openModal({
+    title: 'Delete Fill-Up Record?',
+    iconSvg: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>`,
+    iconClass: 'danger',
+    wide: false,
+    bodyHtml: `
+      Are you sure you want to delete this record?<br><br>
+      <strong>Date:</strong> ${formatDateDisplay(rec.date)}<br>
+      <strong>Odometer:</strong> ${formatNumber(rec.odometer, 0)} ${prefs.distanceUnit}<br>
+      <strong>Cost:</strong> ${formatCurrency(rec.totalCost)}<br><br>
+      <span style="color:var(--danger); font-size:0.8rem; font-weight:600;">This action cannot be undone.</span>
+    `,
+    buttons: [
+      {
+        text: 'Cancel',
+        class: 'btn-secondary',
+        onClick: closeModal
+      },
+      {
+        text: 'Delete',
+        class: 'btn-danger',
+        onClick: () => {
+          records = records.filter(r => r.id !== recordId);
+          saveRecords();
+          closeModal();
+          showToast('Record deleted', 'info');
+          renderRecords();
+          renderDashboard();
+        }
+      }
+    ]
+  });
 }
 
 /**
@@ -726,13 +1136,6 @@ function promptFactoryReset() {
 
   modal.classList.add('open');
   setTimeout(() => confirmInput.focus(), 100);
-}
-
-/**
- * Close modal
- */
-function closeModal() {
-  document.getElementById('app-modal-backdrop').classList.remove('open');
 }
 
 /**

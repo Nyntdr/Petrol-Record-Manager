@@ -838,7 +838,7 @@ html, body {
   display: block;
 }
 
-/* Quick Fuel Grade Chips */
+/* Option / Setting Selection Chips */
 .chip-group {
   display: flex;
   flex-wrap: wrap;
@@ -1081,11 +1081,63 @@ textarea:focus-visible {
   text-decoration: underline;
 }
 
-/* Record Card Presentation */
+/* Record Presentation Containers */
 #records-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.records-cards-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 12px;
+}
+
+.records-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* View Mode Toggle Switcher (Cards vs Table) */
+.records-view-toggle {
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 3px;
+  gap: 2px;
+}
+
+.view-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  min-height: 34px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.16s ease;
+}
+
+.view-toggle-btn:hover {
+  color: var(--text-main);
+  background-color: var(--bg-card-hover);
+}
+
+.view-toggle-btn.active {
+  background-color: var(--bg-card);
+  color: var(--primary);
+  box-shadow: var(--shadow-sm);
 }
 
 .record-card {
@@ -1267,6 +1319,11 @@ textarea:focus-visible {
   transform: scale(0.95);
 }
 
+.record-action-btn.details-btn:hover {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
 .record-action-btn.edit-btn:hover {
   color: var(--accent);
   border-color: var(--accent);
@@ -1275,6 +1332,394 @@ textarea:focus-visible {
 .record-action-btn.delete-btn:hover {
   color: var(--danger);
   border-color: var(--danger);
+}
+
+/* ==========================================================================
+   Tabular Records View Presentation
+   ========================================================================== */
+.records-table-wrap {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  box-shadow: var(--shadow-sm);
+}
+
+.records-table-wrap::-webkit-scrollbar {
+  height: 6px;
+}
+
+.records-table-wrap::-webkit-scrollbar-track {
+  background-color: var(--bg-input);
+}
+
+.records-table-wrap::-webkit-scrollbar-thumb {
+  background-color: var(--border-color);
+  border-radius: var(--radius-full);
+}
+
+.records-table-wrap::-webkit-scrollbar-thumb:hover {
+  background-color: var(--text-muted);
+}
+
+.records-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.records-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.records-table th {
+  background-color: var(--bg-input);
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border-color);
+  user-select: none;
+}
+
+.records-table th.th-sticky-action,
+.records-table td.td-sticky-action {
+  position: sticky;
+  right: 0;
+  z-index: 1;
+}
+
+.records-table th.th-sticky-action {
+  background-color: var(--bg-input);
+  z-index: 3;
+}
+
+.records-table td.td-sticky-action {
+  background-color: var(--bg-card);
+}
+
+.records-table tr.table-record-row:hover td.td-sticky-action {
+  background-color: var(--bg-card-hover);
+}
+
+.records-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  vertical-align: middle;
+  transition: background-color 0.15s ease;
+}
+
+.records-table tr.table-record-row {
+  cursor: pointer;
+}
+
+.records-table tr.table-record-row:hover td {
+  background-color: var(--bg-card-hover);
+}
+
+.records-table tr:last-child td {
+  border-bottom: none;
+}
+
+.table-date-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.table-date-cell .cell-main {
+  font-weight: 600;
+  color: var(--text-main);
+  font-size: 0.82rem;
+}
+
+.table-date-cell .station-pill {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  background-color: var(--bg-input);
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  display: inline-block;
+  max-width: 130px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cell-num {
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.cell-unit {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  margin-left: 2px;
+}
+
+.cell-bold {
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.cell-muted {
+  color: var(--text-muted);
+}
+
+.cell-note {
+  font-size: 0.76rem;
+  color: var(--text-secondary);
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.table-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.table-action-btn {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-input);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.table-action-btn:hover {
+  background-color: var(--bg-card);
+  color: var(--text-main);
+}
+
+.table-action-btn.edit:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.table-action-btn.delete:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.table-action-btn.view-details:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* ==========================================================================
+   Pagination Component
+   ========================================================================== */
+.pagination-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px 16px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.pagination-info {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.page-btn {
+  min-width: 36px;
+  height: 36px;
+  padding: 0 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-input);
+  color: var(--text-main);
+  font-size: 0.82rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.page-btn:hover:not(:disabled) {
+  background-color: var(--bg-card-hover);
+  border-color: var(--primary-border);
+}
+
+.page-btn.active {
+  background-color: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary);
+  cursor: default;
+}
+
+.page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.page-ellipsis {
+  padding: 0 4px;
+  color: var(--text-muted);
+  font-weight: 700;
+  user-select: none;
+}
+
+/* ==========================================================================
+   Full Fuel Details Modal Presentation
+   ========================================================================== */
+.record-details-dialog-content {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  text-align: left;
+}
+
+.record-details-highlight-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.record-details-cost-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-muted);
+}
+
+.detail-cost-value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -0.02em;
+  margin-top: 2px;
+}
+
+.record-details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+@media (min-width: 480px) {
+  .record-details-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.record-detail-item {
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detail-lbl {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.detail-val {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.status-pill {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  display: inline-block;
+}
+
+.status-pill.full {
+  background-color: var(--primary-light);
+  color: var(--primary);
+  border: 1px solid var(--primary-border);
+}
+
+.status-pill.partial {
+  background-color: var(--warning-light);
+  color: var(--warning);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.record-details-note-box {
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+}
+
+.note-box-title {
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.note-box-text {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  white-space: pre-wrap;
 }
 
 /* ==========================================================================
@@ -1409,10 +1854,19 @@ textarea:focus-visible {
   border-radius: var(--radius-xl);
   width: 100%;
   max-width: 440px;
+  max-height: calc(100vh - 36px);
+  max-height: calc(100dvh - 36px);
   padding: 24px;
   box-shadow: var(--shadow-lg);
   transform: scale(0.95);
   transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modal-dialog.modal-dialog-wide {
+  max-width: 580px;
 }
 
 .modal-backdrop.open .modal-dialog {
@@ -1422,8 +1876,39 @@ textarea:focus-visible {
 .modal-header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
   margin-bottom: 14px;
+  flex-shrink: 0;
+}
+
+.modal-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.modal-close-btn:hover {
+  background-color: var(--bg-card-hover);
+  color: var(--text-main);
 }
 
 .modal-icon-wrap {
@@ -1456,13 +1941,20 @@ textarea:focus-visible {
   font-size: 0.9rem;
   color: var(--text-secondary);
   line-height: 1.55;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-right: 4px;
+  flex: 1 1 auto;
 }
 
 .modal-footer {
   display: flex;
   gap: 10px;
   justify-content: flex-end;
+  flex-shrink: 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-subtle);
 }
 
 /* ==========================================================================
@@ -1984,7 +2476,7 @@ textarea:focus-visible {
   }
 
   /* Records: Fluid Multi-Column Cards Grid */
-  #records-list-container {
+  .records-cards-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
     gap: 20px;
@@ -2024,7 +2516,7 @@ textarea:focus-visible {
     padding: 36px 48px;
   }
 
-  #records-list-container {
+  .records-cards-grid {
     grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
     gap: 22px;
   }
@@ -2035,7 +2527,7 @@ textarea:focus-visible {
     padding: 40px 60px;
   }
 
-  #records-list-container {
+  .records-cards-grid {
     grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
     gap: 24px;
   }
@@ -2044,3 +2536,142 @@ textarea:focus-visible {
     max-width: 960px;
   }
 }
+
+/* ==========================================================================
+   MOBILE & TABLET RESPONSIVE TUNING (< 768px and < 480px)
+   ========================================================================== */
+@media (max-width: 767px) {
+  .records-table-wrap {
+    border-radius: var(--radius-md);
+  }
+
+  .records-table th {
+    padding: 10px 10px;
+    font-size: 0.68rem;
+  }
+
+  .records-table td {
+    padding: 10px 10px;
+    font-size: 0.8rem;
+  }
+
+  .table-date-cell .cell-main {
+    font-size: 0.78rem;
+  }
+
+  .table-row-actions {
+    gap: 4px;
+  }
+
+  .table-action-btn {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+  }
+}
+
+@media (max-width: 580px) {
+  /* Mobile Records Header & Toggle */
+  .records-page-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .records-view-toggle {
+    padding: 2px;
+  }
+
+  .view-toggle-btn {
+    padding: 5px 10px;
+    font-size: 0.76rem;
+    min-height: 32px;
+  }
+
+  /* Mobile Pagination Component */
+  .pagination-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 10px;
+  }
+
+  .pagination-info {
+    text-align: center;
+    font-size: 0.76rem;
+  }
+
+  .pagination-controls {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .page-btn {
+    min-width: 32px;
+    height: 32px;
+    padding: 0 6px;
+    font-size: 0.76rem;
+  }
+
+  /* Mobile Full Details Modal */
+  .modal-dialog {
+    padding: 16px 14px;
+    border-radius: var(--radius-lg);
+    width: calc(100% - 16px);
+    max-height: calc(100vh - 20px);
+    max-height: calc(100dvh - 20px);
+  }
+
+  .modal-header {
+    margin-bottom: 12px;
+  }
+
+  .modal-title {
+    font-size: 1.05rem;
+  }
+
+  .modal-icon-wrap {
+    width: 32px;
+    height: 32px;
+  }
+
+  .record-details-highlight-card {
+    padding: 10px 12px;
+  }
+
+  .detail-cost-value {
+    font-size: 1.3rem;
+  }
+
+  .record-details-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .record-detail-item {
+    padding: 8px 10px;
+  }
+
+  .detail-val {
+    font-size: 0.82rem;
+  }
+
+  .modal-footer {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-top: 10px;
+  }
+
+  .modal-footer .btn {
+    flex: 1 1 calc(50% - 4px);
+    font-size: 0.84rem;
+    padding: 9px 12px;
+  }
+
+  .modal-footer .btn:last-child {
+    flex: 1 1 100%;
+  }
+}
+

@@ -18,7 +18,6 @@ function handleFormSubmit(e) {
   const costVal = parseFloat(document.getElementById('field-cost').value);
   const isFullTank = document.getElementById('field-fulltank').checked;
   const stationVal = document.getElementById('field-station').value.trim();
-  const fuelTypeVal = document.getElementById('field-fueltype').value.trim();
   const notesVal = document.getElementById('field-notes').value.trim();
 
   let hasErrors = false;
@@ -95,7 +94,6 @@ function handleFormSubmit(e) {
     volume: volVal,
     totalCost: costVal,
     isFullTank: Boolean(isFullTank),
-    fuelType: fuelTypeVal || 'Regular 95',
     station: stationVal || '',
     notes: notesVal || ''
   };
@@ -125,6 +123,7 @@ function clearAllFilters() {
   filters.search = '';
   filters.startDate = '';
   filters.endDate = '';
+  recordsCurrentPage = 1;
   document.getElementById('search-input').value = '';
   document.getElementById('filter-start-date').value = '';
   document.getElementById('filter-end-date').value = '';
@@ -184,16 +183,6 @@ function setupEventListeners() {
     accordionBtn.setAttribute('aria-expanded', String(isOpen));
   });
 
-  // Quick Fuel Grade Chips
-  document.querySelectorAll('.chip-group .chip-btn[data-val]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const val = btn.getAttribute('data-val');
-      document.getElementById('field-fueltype').value = val;
-      document.querySelectorAll('.chip-group .chip-btn[data-val]').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-    });
-  });
-
   // Search & Date Filter Inputs
   const searchInput = document.getElementById('search-input');
   const searchClear = document.getElementById('btn-search-clear');
@@ -202,6 +191,7 @@ function setupEventListeners() {
 
   searchInput.addEventListener('input', () => {
     filters.search = searchInput.value;
+    recordsCurrentPage = 1;
     searchClear.classList.toggle('visible', Boolean(searchInput.value));
     renderRecords();
   });
@@ -209,21 +199,30 @@ function setupEventListeners() {
   searchClear.addEventListener('click', () => {
     searchInput.value = '';
     filters.search = '';
+    recordsCurrentPage = 1;
     searchClear.classList.remove('visible');
     renderRecords();
   });
 
   startDateInput.addEventListener('change', () => {
     filters.startDate = startDateInput.value;
+    recordsCurrentPage = 1;
     renderRecords();
   });
 
   endDateInput.addEventListener('change', () => {
     filters.endDate = endDateInput.value;
+    recordsCurrentPage = 1;
     renderRecords();
   });
 
   document.getElementById('btn-clear-all-filters').addEventListener('click', clearAllFilters);
+
+  // Records View Mode Switcher (Cards vs Table)
+  const btnViewCards = document.getElementById('btn-view-cards');
+  const btnViewTable = document.getElementById('btn-view-table');
+  if (btnViewCards) btnViewCards.addEventListener('click', () => setRecordsViewMode('cards'));
+  if (btnViewTable) btnViewTable.addEventListener('click', () => setRecordsViewMode('table'));
 
   // Settings: Currency Preset Selection
   document.querySelectorAll('#currency-chip-group .chip-btn').forEach(btn => {

@@ -29,115 +29,15 @@ function isIosBrowser() {
 }
 
 /**
- * Dynamically synthesizes high-res canvas PNG icons and stores in CacheStorage
- * for browser environments that request PNG icons.
+ * Verify and ensure PWA icons and meta tags are loaded
  */
-function generatePwaCanvasIcons() {
-  try {
-    function createFuelIconDataUrl(size) {
-      const canvas = document.createElement('canvas');
-      canvas.width = size;
-      canvas.height = size;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return '';
-
-      // Clean rounded squircle container (solid Slate 900)
-      const radius = size * 0.22;
-      ctx.fillStyle = '#0f172a';
-      ctx.beginPath();
-      ctx.moveTo(radius, 0);
-      ctx.lineTo(size - radius, 0);
-      ctx.quadraticCurveTo(size, 0, size, radius);
-      ctx.lineTo(size, size - radius);
-      ctx.quadraticCurveTo(size, size, size - radius, size);
-      ctx.lineTo(radius, size);
-      ctx.quadraticCurveTo(0, size, 0, size - radius);
-      ctx.lineTo(0, radius);
-      ctx.quadraticCurveTo(0, 0, radius, 0);
-      ctx.closePath();
-      ctx.fill();
-
-      // Inner card housing (solid Slate 800)
-      ctx.fillStyle = '#1e293b';
-      const inset = size * 0.16;
-      const innerW = size * 0.45;
-      const innerH = size * 0.68;
-      ctx.fillRect(inset, inset, innerW, innerH);
-
-      // Solid Emerald fuel pump graphics (NO gradients)
-      const s = size / 24;
-      ctx.fillStyle = '#10b981';
-      ctx.strokeStyle = '#10b981';
-      ctx.lineWidth = s * 1.8;
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-
-      // Base bar
-      ctx.beginPath();
-      ctx.moveTo(3 * s, 21 * s);
-      ctx.lineTo(15 * s, 21 * s);
-      ctx.stroke();
-
-      // Pump outer frame
-      ctx.beginPath();
-      ctx.rect(5 * s, 4 * s, 8 * s, 16 * s);
-      ctx.stroke();
-
-      // Screen window
-      ctx.beginPath();
-      ctx.rect(6.8 * s, 7 * s, 4.4 * s, 3.8 * s);
-      ctx.fill();
-
-      // Hose & Nozzle
-      ctx.beginPath();
-      ctx.moveTo(13 * s, 10 * s);
-      ctx.lineTo(16.5 * s, 10 * s);
-      ctx.quadraticCurveTo(18.5 * s, 10 * s, 18.5 * s, 13 * s);
-      ctx.lineTo(18.5 * s, 17 * s);
-      ctx.stroke();
-
-      return canvas.toDataURL('image/png');
-    }
-
-    const icon192 = createFuelIconDataUrl(192);
-    const icon512 = createFuelIconDataUrl(512);
-
-    // Cache dynamic PNGs in CacheStorage so Service Worker can serve them directly
-    if ('caches' in window && icon192 && icon512) {
-      caches.open('fueltrack-cache-v3').then(cache => {
-        function urlToResponse(dataUrl) {
-          const parts = dataUrl.split(',');
-          const byteString = atob(parts[1]);
-          const mimeString = parts[0].split(':')[1].split(';')[0];
-          const ab = new ArrayBuffer(byteString.length);
-          const ia = new Uint8Array(ab);
-          for (let i = 0; i < byteString.length; i++) {
-            ia[i] = byteString.charCodeAt(i);
-          }
-          const blob = new Blob([ab], { type: mimeString });
-          return new Response(blob, {
-            headers: { 'Content-Type': 'image/png' }
-          });
-        }
-
-        try {
-          cache.put('./icons/icon-192.png', urlToResponse(icon192));
-          cache.put('./icons/icon-512.png', urlToResponse(icon512));
-        } catch (e) {
-          // Ignore cache put issues in restricted environments
-        }
-      }).catch(() => {});
-    }
-
-    // Set apple-touch-icon
-    if (icon192 && !document.querySelector('link[rel="apple-touch-icon"]')) {
-      const appleIcon = document.createElement('link');
-      appleIcon.rel = 'apple-touch-icon';
-      appleIcon.href = icon192;
-      document.head.appendChild(appleIcon);
-    }
-  } catch (err) {
-    console.warn('Canvas icon generation notice:', err);
+function verifyPwaIcons() {
+  if (!document.querySelector('link[rel="apple-touch-icon"]')) {
+    const appleIcon = document.createElement('link');
+    appleIcon.rel = 'apple-touch-icon';
+    appleIcon.sizes = '180x180';
+    appleIcon.href = 'icons/apple-touch-icon.png';
+    document.head.appendChild(appleIcon);
   }
 }
 
@@ -216,9 +116,11 @@ function promptPwaInstall() {
     window.deferredPwaPrompt.prompt();
     window.deferredPwaPrompt.userChoice.then((choiceResult) => {
       if (choiceResult.outcome === 'accepted') {
-        showToast('Thank you for installing FuelTrack!', 'success');
+        showToast('FuelTrack is installing! Look in your apps or home screen.', 'success');
         const banner = document.getElementById('pwa-install-banner');
         if (banner) banner.style.display = 'none';
+      } else {
+        showToast('Installation cancelled', 'info');
       }
       window.deferredPwaPrompt = null;
       updatePwaUiState();
@@ -369,8 +271,8 @@ function initPwaServices() {
     }
   }
 
-  // Generate canvas icons in background
-  generatePwaCanvasIcons();
+  // Verify static icons and meta tags
+  verifyPwaIcons();
 
   // Initial UI check
   updatePwaUiState();

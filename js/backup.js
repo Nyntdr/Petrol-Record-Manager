@@ -46,7 +46,6 @@ function exportCSVBackup() {
     'Is Full Tank',
     'Fuel Efficiency',
     'Efficiency Unit',
-    'Fuel Grade',
     'Station',
     'Notes'
   ];
@@ -69,7 +68,6 @@ function exportCSVBackup() {
       rec.isFullTank ? 'TRUE' : 'FALSE',
       effValue,
       effUnit,
-      rec.fuelType || '',
       rec.station || '',
       rec.notes || ''
     ];
@@ -139,7 +137,6 @@ function handleFileImport(event) {
           volume: vol,
           totalCost: cost,
           isFullTank: Boolean(item.isFullTank),
-          fuelType: String(item.fuelType || 'Regular 95'),
           station: String(item.station || ''),
           notes: String(item.notes || '')
         });
@@ -225,7 +222,6 @@ function loadSampleData() {
       volume: 42.0,
       totalCost: 67.20,
       isFullTank: true,
-      fuelType: 'Regular 95',
       station: 'Shell Central',
       notes: 'Baseline full tank - city commute'
     },
@@ -236,7 +232,6 @@ function loadSampleData() {
       volume: 38.5,
       totalCost: 61.60,
       isFullTank: true,
-      fuelType: 'Regular 95',
       station: 'BP Highway 1',
       notes: 'Weekend road trip (520 km traveled)'
     },
@@ -247,7 +242,6 @@ function loadSampleData() {
       volume: 18.0,
       totalCost: 29.16,
       isFullTank: false,
-      fuelType: 'Premium 98',
       station: 'TotalEnergies',
       notes: 'Quick partial top-up before mountain pass'
     },
@@ -258,7 +252,6 @@ function loadSampleData() {
       volume: 34.2,
       totalCost: 55.40,
       isFullTank: true,
-      fuelType: 'Regular 95',
       station: 'Shell Central',
       notes: 'Filled to full (mileage combines previous partial)'
     }
