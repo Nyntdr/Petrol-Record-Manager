@@ -1,9 +1,12 @@
 // FuelTrack Service Worker for offline PWA functionality
-const CACHE_NAME = 'fueltrack-cache-v2';
+const CACHE_NAME = 'fueltrack-cache-v3';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
+  './manifest.json',
   './css/style.css',
+  './icons/icon.svg',
+  './icons/icon-maskable.svg',
   './js/storage.js',
   './js/calculator.js',
   './js/ui.js',
@@ -35,6 +38,8 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
+  const url = new URL(event.request.url);
+
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {
@@ -50,6 +55,7 @@ self.addEventListener('fetch', (event) => {
         });
         return cachedResponse;
       }
+
       return fetch(event.request).then((networkResponse) => {
         if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
           return networkResponse;
@@ -60,8 +66,13 @@ self.addEventListener('fetch', (event) => {
         });
         return networkResponse;
       }).catch(() => {
+        // Fallback for navigation requests
         if (event.request.mode === 'navigate') {
           return caches.match('./index.html');
+        }
+        // Fallback for icon requests if PNG not present
+        if (url.pathname.includes('icon-192.png') || url.pathname.includes('icon-512.png')) {
+          return caches.match('./icons/icon.svg');
         }
       });
     })

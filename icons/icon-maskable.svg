@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Full bleed background for adaptive/maskable icons -->
+  <rect width="512" height="512" fill="#0f172a"/>
+  <!-- Centered safe-zone fuel pump -->
+  <g fill="none" stroke="#10b981" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" transform="translate(40, 40) scale(0.84)">
+    <path d="M100 420h220" />
+    <rect x="120" y="92" width="180" height="328" rx="28" fill="#1e293b" />
+    <rect x="156" y="148" width="108" height="72" rx="12" fill="#0f172a" stroke="#10b981" stroke-width="16" />
+    <line x1="180" y1="184" x2="240" y2="184" stroke="#10b981" stroke-width="14" />
+    <path d="M300 190h36c24 0 44 20 44 44v146c0 14-11 26-25 26s-25-12-25-26v-90" />
+    <path d="M300 240h20" />
+    <path d="M380 180l-30-50h-30" stroke="#10b981" stroke-width="20" />
+  </g>
+</svg>

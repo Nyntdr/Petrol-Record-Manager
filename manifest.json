@@ -1,0 +1,53 @@
+{
+  "name": "FuelTrack - Vehicle Fuel Manager",
+  "short_name": "FuelTrack",
+  "description": "Track vehicle fuel consumption, mileage, expenses, and efficiency completely offline.",
+  "id": "./?source=pwa",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "categories": ["utilities", "finance", "travel"],
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Log Fill-Up",
+      "short_name": "Add Entry",
+      "url": "./index.html#add",
+      "icons": [{ "src": "icons/icon.svg", "sizes": "96x96" }]
+    },
+    {
+      "name": "Records History",
+      "short_name": "Records",
+      "url": "./index.html#records",
+      "icons": [{ "src": "icons/icon.svg", "sizes": "96x96" }]
+    }
+  ]
+}

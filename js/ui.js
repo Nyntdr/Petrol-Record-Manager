@@ -255,7 +255,7 @@ function generateMonthlySvgChart(monthlyData) {
     const yPos = padTop + plotHeight - barH;
     const isCurrentMonth = idx === barCount - 1;
 
-    const fill = isCurrentMonth ? 'url(#barGradientActive)' : 'url(#barGradient)';
+    const fill = isCurrentMonth ? 'var(--primary)' : 'rgba(16, 185, 129, 0.4)';
     const formattedAmount = `${prefs.currencySymbol}${Math.round(item.amount)}`;
 
     barsHtml += `
@@ -283,16 +283,6 @@ function generateMonthlySvgChart(monthlyData) {
 
   return `
     <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="xMidYMid meet">
-      <defs>
-        <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#06b6d4" />
-          <stop offset="100%" stop-color="#10b981" />
-        </linearGradient>
-        <linearGradient id="barGradientActive" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#22d3ee" />
-          <stop offset="100%" stop-color="#059669" />
-        </linearGradient>
-      </defs>
       ${gridLines}
       ${barsHtml}
     </svg>
@@ -753,23 +743,27 @@ function showToast(message, type = 'info') {
   if (!container) return;
 
   const toast = document.createElement('div');
-  toast.className = `toast-pill ${type}`;
+  toast.className = `toast-pill toast-${type}`;
 
   let iconSvg = '';
   if (type === 'success') {
-    iconSvg = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--primary);"><polyline points="20 6 9 17 4 12"/></svg>`;
+    iconSvg = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`;
   } else if (type === 'error') {
-    iconSvg = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--danger);"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
+    iconSvg = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
   } else {
-    iconSvg = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--accent);"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`;
+    iconSvg = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`;
   }
 
-  toast.innerHTML = `${iconSvg}<span>${escapeHtml(message)}</span>`;
+  toast.innerHTML = `
+    <div class="toast-icon-wrap ${type}">
+      ${iconSvg}
+    </div>
+    <span class="toast-text">${escapeHtml(message)}</span>
+  `;
   container.appendChild(toast);
 
   setTimeout(() => {
-    toast.style.opacity = '0';
-    toast.style.transform = 'translateY(-12px)';
+    toast.classList.add('toast-hiding');
     setTimeout(() => toast.remove(), 250);
   }, 3200);
 }

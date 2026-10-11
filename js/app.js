@@ -302,6 +302,22 @@ function setupEventListeners() {
   document.getElementById('btn-load-sample').addEventListener('click', loadSampleData);
   document.getElementById('btn-factory-reset').addEventListener('click', promptFactoryReset);
 
+  // PWA Install Triggers (Mobile Header, Desktop Sidebar, Banner, Settings)
+  const topInstallBtn = document.getElementById('btn-top-install');
+  if (topInstallBtn) topInstallBtn.addEventListener('click', promptPwaInstall);
+
+  const sidebarInstallBtn = document.getElementById('btn-sidebar-install');
+  if (sidebarInstallBtn) sidebarInstallBtn.addEventListener('click', promptPwaInstall);
+
+  const bannerInstallBtn = document.getElementById('btn-banner-install');
+  if (bannerInstallBtn) bannerInstallBtn.addEventListener('click', promptPwaInstall);
+
+  const bannerDismissBtn = document.getElementById('btn-banner-dismiss');
+  if (bannerDismissBtn) bannerDismissBtn.addEventListener('click', dismissPwaBanner);
+
+  const settingsInstallBtn = document.getElementById('btn-settings-install');
+  if (settingsInstallBtn) settingsInstallBtn.addEventListener('click', promptPwaInstall);
+
   // Modal Backdrop Click & Escape Key Dismiss
   document.getElementById('app-modal-backdrop').addEventListener('click', (e) => {
     if (e.target.id === 'app-modal-backdrop') closeModal();
@@ -318,7 +334,6 @@ function setupEventListeners() {
 function initApp() {
   loadStorageData();
   applyTheme(prefs.theme);
-  generatePwaManifestAndIcons();
   initPwaServices();
   setupFormDefaults();
   setupEventListeners();

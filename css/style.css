@@ -159,12 +159,12 @@ html, body {
   width: 34px;
   height: 34px;
   border-radius: var(--radius-md);
-  background: linear-gradient(135deg, var(--primary), var(--accent));
+  background-color: var(--primary);
   display: flex;
   align-items: center;
   justify-content: center;
   color: #ffffff;
-  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+  box-shadow: var(--shadow-sm);
   flex-shrink: 0;
 }
 
@@ -186,6 +186,35 @@ html, body {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+/* Mobile Header PWA Install Button */
+.btn-top-install {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: var(--radius-full);
+  background-color: var(--primary);
+  border: 1px solid var(--primary);
+  color: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-top-install:hover {
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
+
+.btn-top-install:active {
+  transform: scale(0.96);
 }
 
 .badge-units {
@@ -316,15 +345,16 @@ html, body {
 
 /* Distinct Add Action Pill in Nav */
 .nav-btn.nav-add-btn .nav-icon-wrap {
-  background: linear-gradient(135deg, var(--primary), var(--accent));
+  background-color: var(--primary);
   color: #ffffff;
   width: 36px;
   height: 28px;
-  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.35);
+  box-shadow: var(--shadow-sm);
 }
 
 .nav-btn.nav-add-btn.active .nav-icon-wrap {
-  box-shadow: 0 0 12px var(--primary);
+  background-color: var(--primary-hover);
+  box-shadow: 0 0 0 2px var(--bg-card), 0 0 0 4px var(--primary);
 }
 
 /* ==========================================================================
@@ -402,24 +432,13 @@ html, body {
 }
 
 .hero-stat-card {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(6, 182, 212, 0.08)), var(--bg-card);
-  border: 1px solid var(--primary-border);
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius-xl);
-  padding: 18px;
+  padding: 20px;
   margin-bottom: 16px;
   position: relative;
-  overflow: hidden;
-}
-
-.hero-stat-card::after {
-  content: "";
-  position: absolute;
-  top: -30px;
-  right: -30px;
-  width: 100px;
-  height: 100px;
-  background: radial-gradient(circle, rgba(16, 185, 129, 0.25) 0%, transparent 70%);
-  pointer-events: none;
+  box-shadow: var(--shadow-sm);
 }
 
 .hero-label {
@@ -501,11 +520,11 @@ html, body {
 }
 
 .extreme-box.best {
-  border-left: 3px solid var(--primary);
+  /* No left colored borders */
 }
 
 .extreme-box.worst {
-  border-left: 3px solid var(--warning);
+  /* No left colored borders */
 }
 
 .extreme-tag {
@@ -672,10 +691,10 @@ html, body {
 
 /* Live Unit Price Badge Display */
 .unit-price-preview {
-  background: linear-gradient(135deg, var(--bg-input), var(--bg-card));
-  border: 1px dashed var(--accent);
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  padding: 10px 14px;
+  padding: 12px 14px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -883,9 +902,16 @@ html, body {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+  background-color: var(--primary);
+  border: 1px solid var(--primary);
   color: #ffffff;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
+  filter: none;
 }
 
 .btn-secondary {
@@ -896,12 +922,37 @@ html, body {
 
 .btn-secondary:hover {
   background-color: var(--bg-card-hover);
+  filter: none;
 }
 
 .btn-danger {
-  background: linear-gradient(135deg, var(--danger), var(--danger-hover));
+  background-color: var(--danger);
+  border: 1px solid var(--danger);
   color: #ffffff;
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-danger:hover {
+  background-color: var(--danger-hover);
+  border-color: var(--danger-hover);
+  filter: none;
+}
+
+.btn-sm {
+  height: 32px;
+  min-height: 32px;
+  padding: 0 12px;
+  font-size: 0.78rem;
+  border-radius: var(--radius-sm);
+}
+
+.btn:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }
 
 .btn-outline-danger {
@@ -1193,17 +1244,18 @@ html, body {
 }
 
 .record-action-btn {
-  background: none;
+  background-color: var(--bg-input);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
-  padding: 4px 10px;
-  font-size: 0.74rem;
+  padding: 8px 14px;
+  min-height: 38px;
+  font-size: 0.78rem;
   font-weight: 600;
   color: var(--text-secondary);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   transition: all 0.15s ease;
 }
 
@@ -1241,7 +1293,8 @@ html, body {
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+  background-color: var(--primary-light);
+  border: 1px solid var(--primary-border);
   color: var(--primary);
   display: flex;
   align-items: center;
@@ -1413,7 +1466,7 @@ html, body {
 }
 
 /* ==========================================================================
-   Toast Notification System
+   Toast Notification System (Light & Dark Theme Adaptive)
    ========================================================================== */
 .toast-container {
   position: fixed;
@@ -1422,45 +1475,252 @@ html, body {
   transform: translateX(-50%);
   width: calc(100% - 32px);
   max-width: 440px;
-  z-index: 120;
+  z-index: 9999;
   pointer-events: none;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  align-items: center;
 }
 
 .toast-pill {
-  background-color: #1e293b;
-  color: #ffffff;
+  background-color: var(--bg-card);
+  color: var(--text-main);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-full);
-  padding: 10px 16px;
-  font-size: 0.84rem;
-  font-weight: 600;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
-  display: flex;
+  padding: 8px 16px 8px 10px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  line-height: 1.4;
+  box-shadow: var(--shadow-lg);
+  display: inline-flex;
   align-items: center;
   gap: 10px;
+  max-width: 100%;
   pointer-events: auto;
-  animation: slideDownToast 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: slideDownToast 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   transition: opacity 0.2s ease, transform 0.2s ease;
+  user-select: none;
 }
 
-.toast-pill.success {
-  border-left: 4px solid var(--primary);
+.toast-pill.success,
+.toast-pill.toast-success {
+  border-color: var(--primary-border);
 }
 
-.toast-pill.error {
-  border-left: 4px solid var(--danger);
+.toast-pill.error,
+.toast-pill.toast-error {
+  border-color: rgba(239, 68, 68, 0.35);
 }
 
-.toast-pill.info {
-  border-left: 4px solid var(--accent);
+.toast-pill.info,
+.toast-pill.toast-info {
+  border-color: var(--border-color);
+}
+
+.toast-icon-wrap {
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.toast-icon-wrap.success {
+  background-color: var(--primary-light);
+  color: var(--primary);
+}
+
+.toast-icon-wrap.error {
+  background-color: var(--danger-light);
+  color: var(--danger);
+}
+
+.toast-icon-wrap.info {
+  background-color: var(--accent-light);
+  color: var(--accent);
+}
+
+.toast-text {
+  color: var(--text-main);
+  font-size: 0.84rem;
+  font-weight: 500;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.toast-pill.toast-hiding {
+  opacity: 0;
+  transform: translateY(-8px) scale(0.96);
 }
 
 @keyframes slideDownToast {
-  from { opacity: 0; transform: translateY(-16px); }
+  from {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ==========================================================================
+   PWA Install UI (Mobile Banner, Settings Card & Badges)
+   ========================================================================== */
+.pwa-install-banner {
+  background-color: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
+  padding: 10px 16px;
+  position: relative;
+  z-index: 45;
+  box-shadow: var(--shadow-sm);
+  animation: slideDownBanner 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideDownBanner {
+  from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+.banner-inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.banner-icon-box {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  background-color: var(--primary-light);
+  color: var(--primary);
+  border: 1px solid var(--primary-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.banner-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.banner-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.2;
+}
+
+.banner-subtitle {
+  font-size: 0.74rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 2px;
+}
+
+.banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.btn-banner-close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  width: 34px;
+  height: 34px;
+  min-height: 34px;
+  min-width: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.15s ease;
+}
+
+.btn-banner-close:hover {
+  background-color: var(--bg-card-hover);
+  color: var(--text-main);
+}
+
+.pwa-settings-card {
+  margin-bottom: 16px;
+}
+
+.pwa-settings-action-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.pwa-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pwa-badge.badge-browser {
+  background-color: var(--bg-input);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+}
+
+.pwa-badge.badge-installed {
+  background-color: var(--primary-light);
+  color: var(--primary);
+  border: 1px solid var(--primary-border);
+}
+
+.btn-sidebar-install {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 14px;
+  border-radius: var(--radius-md);
+  background-color: var(--primary);
+  border: 1px solid var(--primary);
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  width: 100%;
+  justify-content: center;
+}
+
+.btn-sidebar-install:hover {
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
+
+.btn-sidebar-install:active {
+  transform: scale(0.97);
+}
+
+.ios-install-guide {
+  font-size: 0.88rem;
+  line-height: 1.5;
 }
 
 /* ==========================================================================
@@ -1569,14 +1829,25 @@ html, body {
     background-color: transparent;
   }
 
-  /* Desktop Sidebar Footer with Theme & Units */
+  /* Desktop Sidebar Footer with Theme, Units & Install */
   .sidebar-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px 8px 4px 8px;
+    border-top: 1px solid var(--border-subtle);
+    margin-top: auto;
+  }
+
+  .sidebar-footer-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 18px 8px 4px 8px;
-    border-top: 1px solid var(--border-subtle);
-    margin-top: auto;
+    width: 100%;
+  }
+
+  .btn-sidebar-install {
+    display: inline-flex;
   }
 
   /* Desktop Main Scroll Area - fills 100% of remaining screen width */
@@ -1610,7 +1881,9 @@ html, body {
     right: 24px;
     left: auto;
     transform: none;
-    max-width: 380px;
+    width: auto;
+    max-width: 400px;
+    align-items: flex-end;
   }
 
   /* Dashboard: 4-Column Stats Grid */

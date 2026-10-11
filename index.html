@@ -11,6 +11,11 @@
   <meta name="apple-mobile-web-app-title" content="FuelTrack">
   <title>FuelTrack - Vehicle Fuel & Mileage Tracker</title>
 
+  <!-- PWA Manifest & App Meta -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+  <link rel="apple-touch-icon" href="icons/icon.svg">
+
   <!-- External Modular Stylesheet -->
   <link rel="stylesheet" href="css/style.css">
 </head>
@@ -32,6 +37,14 @@
       </div>
 
       <div class="top-actions">
+        <!-- PWA Install Button for Mobile Browsers -->
+        <button class="btn-top-install" id="btn-top-install" aria-label="Install FuelTrack app" title="Install FuelTrack">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          <span class="btn-install-label">Install</span>
+        </button>
+
         <span class="badge-units" id="top-units-badge" aria-label="Active measurement units">km · L</span>
         <button class="theme-toggle-btn" id="btn-theme-toggle" aria-label="Toggle dark and light theme" title="Toggle theme">
           <svg class="theme-icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
@@ -99,17 +112,48 @@
 
       <!-- Desktop Sidebar Footer -->
       <div class="sidebar-footer">
-        <span class="badge-units" id="sidebar-units-badge" aria-label="Active measurement units">km · L</span>
-        <button class="theme-toggle-btn" id="btn-sidebar-theme-toggle" aria-label="Toggle theme" title="Toggle theme">
-          <svg class="theme-icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
-            <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        <!-- Desktop Sidebar Install Button -->
+        <button class="btn-sidebar-install" id="btn-sidebar-install" aria-label="Install FuelTrack app" title="Install FuelTrack">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
           </svg>
-          <svg class="theme-icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-          </svg>
+          <span>Install App</span>
         </button>
+
+        <div class="sidebar-footer-row">
+          <span class="badge-units" id="sidebar-units-badge" aria-label="Active measurement units">km · L</span>
+          <button class="theme-toggle-btn" id="btn-sidebar-theme-toggle" aria-label="Toggle theme" title="Toggle theme">
+            <svg class="theme-icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+              <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+            </svg>
+            <svg class="theme-icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+          </button>
+        </div>
       </div>
     </nav>
+
+    <!-- PWA Install Banner for Mobile Browsers -->
+    <aside class="pwa-install-banner" id="pwa-install-banner" role="region" aria-label="Install App Banner" style="display:none;">
+      <div class="banner-inner">
+        <div class="banner-icon-box" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 22h12M4 9h10M4 22V4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v18"/>
+            <path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"/>
+            <circle cx="9" cy="6" r="1.5" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="banner-content">
+          <strong class="banner-title">Install FuelTrack</strong>
+          <span class="banner-subtitle">Fast offline access & home screen launch</span>
+        </div>
+        <div class="banner-actions">
+          <button type="button" class="btn-banner-install" id="btn-banner-install">Install</button>
+          <button type="button" class="btn-banner-close" id="btn-banner-dismiss" aria-label="Dismiss install banner">✕</button>
+        </div>
+      </div>
+    </aside>
 
     <!-- Main Content Area -->
     <main class="main-content" id="main-scroll-area">
@@ -373,8 +417,30 @@
             </div>
           </div>
 
-          <!-- Secondary Column: Backup & Danger Zone -->
+          <!-- Secondary Column: Backup, PWA & Danger Zone -->
           <div class="settings-col-secondary">
+            <!-- PWA Installation Status Card -->
+            <div class="card pwa-settings-card" id="settings-pwa-card">
+              <h3 class="card-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>
+                </svg>
+                App Installation & Offline
+              </h3>
+              <p id="pwa-status-description" style="font-size:0.82rem; color:var(--text-secondary); margin-bottom:12px; line-height:1.4;">
+                Install FuelTrack on your home screen for quick 1-tap launch, offline tracking, and a native app experience without browser bars.
+              </p>
+              <div class="pwa-settings-action-row">
+                <button type="button" class="btn btn-primary" id="btn-settings-install">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+                  </svg>
+                  <span id="btn-settings-install-text">Install FuelTrack App</span>
+                </button>
+                <span class="pwa-badge badge-browser" id="pwa-status-badge">Web Browser</span>
+              </div>
+            </div>
+
             <!-- Data Backup & Portability Card -->
             <div class="card">
               <h3 class="card-title">
