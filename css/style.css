@@ -2220,6 +2220,11 @@ textarea:focus-visible {
    Transforms the app into a true Full-Width Desktop Application
    ========================================================================== */
 @media (min-width: 768px) {
+  /* Hide the mobile install banner on desktop (sidebar has an Install App button) */
+  .pwa-install-banner {
+    display: none !important;
+  }
+
   /* Expand Viewport Shell to 100% full monitor width */
   .app-viewport {
     width: 100% !important;

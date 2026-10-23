@@ -29,6 +29,13 @@ function isIosBrowser() {
 }
 
 /**
+ * Check if the app is currently using the desktop layout (>= 768px)
+ */
+function isDesktopViewport() {
+  return window.matchMedia('(min-width: 768px)').matches;
+}
+
+/**
  * Verify and ensure PWA icons and meta tags are loaded
  */
 function verifyPwaIcons() {
@@ -81,8 +88,8 @@ function updatePwaUiState() {
     if (sidebarInstallBtn) sidebarInstallBtn.style.display = 'inline-flex';
     
     // Show banner on mobile/tablet viewports unless user dismissed it this session
-    if (banner && !pwaInstallDismissed) {
-      banner.style.display = 'flex';
+    if (banner) {
+      banner.style.display = (!pwaInstallDismissed && !isDesktopViewport()) ? 'flex' : 'none';
     }
 
     if (settingsBadge) {
@@ -247,6 +254,14 @@ function initPwaServices() {
   try {
     const displayModeQuery = window.matchMedia('(display-mode: standalone)');
     displayModeQuery.addEventListener('change', () => {
+      updatePwaUiState();
+    });
+  } catch (e) {}
+
+  // Re-evaluate the banner when crossing the mobile/desktop breakpoint
+  try {
+    const desktopQuery = window.matchMedia('(min-width: 768px)');
+    desktopQuery.addEventListener('change', () => {
       updatePwaUiState();
     });
   } catch (e) {}
