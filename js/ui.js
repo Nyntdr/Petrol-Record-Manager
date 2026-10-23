@@ -44,7 +44,7 @@ function renderDashboard() {
         ${records.length === 0 ? `
           <div style="margin-top: 14px;">
             <button type="button" class="chip-btn" onclick="loadSampleData()" style="padding:6px 14px; font-weight:600;">
-              ✨ Or Load Demo Data
+              Or Load Demo Data
             </button>
           </div>
         ` : ''}
@@ -600,7 +600,7 @@ function renderRecords() {
         </button>
         <div style="margin-top: 14px;">
           <button type="button" class="chip-btn" onclick="loadSampleData()" style="padding:6px 14px; font-weight:600;">
-            ✨ Load Demo Data
+            Load Demo Data
           </button>
         </div>
       </div>
